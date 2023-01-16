@@ -1,0 +1,21 @@
+# output
+build
+logs
+
+# prisma
+prisma/migrations/**/*
+prisma/dev.db
+
+# typings
+typings
+
+# environment variables
+.env 
+
+# dependencies
+node_modules
+yarn.lock
+yarn-error.log
+
+# random
+objects.js

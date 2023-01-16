@@ -1,0 +1,38 @@
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model Guild {
+    id          String @id @unique
+    confessions Int    @default(0)
+}
+
+model Member {
+    id    String           @id @unique
+    cases ModerationCase[]
+    xp    Int              @default(0)
+    level Int              @default(0)
+    about String?
+}
+
+model ModerationCase {
+    caseId      String   @id @unique
+    member      Member   @relation(fields: [memberId], references: [id])
+    memberId    String
+    moderatorId String
+    reason      String   @default("No reason was provided by the moderator.")
+    date        DateTime @default(now())
+    type        String
+}
+
+model Star {
+    starId    String @id @unique
+    messageId String @unique
+}

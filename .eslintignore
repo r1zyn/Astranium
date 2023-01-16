@@ -1,0 +1,32 @@
+# output
+build
+logs
+
+# lavalink
+lavalink
+
+# editor configs
+.vscode
+.editorconfig
+
+# environment variables
+.env 
+.env.example
+
+# ignore files
+.eslintignore
+.gitignore
+
+# json files
+package.json
+tsconfig.json
+.eslintrc.json
+.markdownlint.json
+
+# dependencies
+node_modules
+yarn.lock 
+yarn-error.log
+
+# github
+.husky

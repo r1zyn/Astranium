@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "editorconfig.editorconfig",
+        "gamunu.vscode-yarn",
+        "mikestead.dotenv",
+        "dbaeumer.vscode-eslint",
+        "ldez.ignore-files",
+        "donjayamanne.githistory",
+        "davidanson.vscode-markdownlint",
+        "bierner.markdown-preview-github-styles",
+        "mariusschulz.yarn-lock-syntax",
+        "vscode-icons-team.vscode-icons"
+    ]
+}

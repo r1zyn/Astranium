@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/nodemon.json",
+    "watch": ["."],
+    "ext": "ts, env, json",
+    "ignore": [
+        "*.md",
+        "*.log",
+        "node_modules",
+        "yarn.lock",
+        "logs",
+        ".gitignore",
+        ".vscode"
+    ],
+    "exec": "tsc && dotenv -e .env node build/index.js --trace-warnings"
+}

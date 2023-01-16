@@ -1,0 +1,44 @@
+{
+    "name": "astranium",
+    "version": "0.0.1",
+    "description": "The official bot for the Astranium community.",
+    "main": "src/index.ts",
+    "license": "GPL-3.0",
+    "private": true,
+    "scripts": {
+        "build": "tsc",
+        "clean": "yarn lint && yarn format",
+        "db:format": "npx prisma format",
+        "db:generate": "npx prisma generate",
+        "db:migrate": "npx prisma migrate dev --name astranium",
+        "db:update": "yarn db:migrate && yarn db:generate",
+        "db:reset": "npx prisma db push --force-reset && node build/scripts/purgeMigrations.js && yarn db:update",
+        "dev": "nodemon",
+        "format": "prettier --write src",
+        "lint": "eslint src --fix",
+        "prepare": "husky install",
+        "publish": "yarn build && yarn clean && git add . && git commit -m \"feat: Production build\" && git push origin master",
+        "start": "yarn build && node build/index.js"
+    },
+    "dependencies": {
+        "@prisma/client": "^4.8.0",
+        "chalk": "4.1.2",
+        "discord.js": "^14.6.0",
+        "dotenv": "^16.0.3",
+        "moment": "^2.29.4",
+        "node-fetch": "2",
+        "prisma": "^4.8.0"
+    },
+    "devDependencies": {
+        "@types/node-fetch": "^2.6.2",
+        "@typescript-eslint/eslint-plugin": "^5.40.1",
+        "@typescript-eslint/parser": "^5.40.1",
+        "dotenv-cli": "^6.0.0",
+        "eslint": "^8.25.0",
+        "husky": "^8.0.0",
+        "lint-staged": "^13.1.0",
+        "nodemon": "^2.0.20",
+        "prettier": "^2.8.2",
+        "typescript": "^4.8.4"
+    }
+}
