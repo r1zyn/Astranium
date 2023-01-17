@@ -36,7 +36,7 @@ export class SubCommand extends SlashCommandSubcommandBuilder {
         options.args && this.setArgs(options.args);
         this.setDescription(
             options.description ||
-            "No description has been provided for this command."
+                "No description has been provided for this command."
         );
         this.setDescriptionLocalizations(
             options.descriptionLocalisations

@@ -42,7 +42,9 @@ export default class MessageReactionAddListener extends Listener {
                 if (
                     reaction.message.channel.id ===
                     Constants.Channels["starboard"]
-                ) { return; }
+                ) {
+                    return;
+                }
 
                 const embed: EmbedBuilder = client.util
                     .embed({
@@ -56,7 +58,8 @@ export default class MessageReactionAddListener extends Listener {
 
                 if (reaction.message.content) {
                     embed.setDescription(
-                        `${reaction.message.content
+                        `${
+                            reaction.message.content
                         }\n\n${client.formatter.hyperlink(
                             "**Jump to message**",
                             reaction.message.url
@@ -111,7 +114,7 @@ export default class MessageReactionAddListener extends Listener {
             if (
                 reaction.emoji.name === Constants.Emojis["green_check_mark"] &&
                 reaction.message.id ===
-                Constants.ReactionMessages["verification"]
+                    Constants.ReactionMessages["verification"]
             ) {
                 const member: GuildMember = await client.util.fetchMember(
                     reaction.message.guild,

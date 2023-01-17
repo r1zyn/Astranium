@@ -48,7 +48,9 @@
         "skipLibCheck": true // Skip type checking all .d.ts files.
     },
     "include": [
-        "src"
+        "src",
+        "typings",
+        "astranium.config.d.ts"
     ],
     "exclude": [
         "build",

@@ -1,31 +1,32 @@
+import type { AstraniumConfig } from "../lib/Client";
+
 import { arch, hostname, platform, userInfo } from "os";
-import { globalLogger } from "../utils";
 import { join } from "path";
 import { reviewConfig } from "./reviewConfig";
 
-export function initProcess(config: any): void {
+export function initProcess(config: AstraniumConfig): void {
     reviewConfig(config);
 
-    globalLogger.info(
+    global.logger.info(
         `Starting Launcher on ${hostname()} with PID ${process.pid}`,
         "launcher"
     );
-    globalLogger.info(
+    global.logger.info(
         `${join(process.cwd(), "src", "index.ts")} started by ${
             userInfo().username
         }`,
         "client"
     );
     console.log(`\t\t\t\t\t\t\t\t       in ${join(process.cwd(), "src")}`);
-    globalLogger.info(
+    global.logger.info(
         `Operating System: ${platform()} | Architecture: ${arch()}`,
         "system"
     );
-    globalLogger.info(
+    global.logger.info(
         `Initiating process for ${config.name} on current instance`,
         "launcher"
     );
-    globalLogger.info(
+    global.logger.info(
         `Using version ${
             config.version
         } on ${config.release.toLowerCase()} release`,

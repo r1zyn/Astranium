@@ -7,7 +7,6 @@ import { Logger } from "./Logger";
 import { PrismaClient } from "@prisma/client";
 import { Util } from "./Util";
 
-import { globalLogger } from "../utils";
 import { join } from "path";
 
 export class AstraniumClient<
@@ -27,7 +26,7 @@ export class AstraniumClient<
         this.config = config;
         this.db = Constants.Prisma;
         this.formatter = Formatter;
-        this.logger = globalLogger;
+        this.logger = new Logger();
         this.util = Util;
 
         this.commandHandler = new CommandHandler(this, {

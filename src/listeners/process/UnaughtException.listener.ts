@@ -1,7 +1,5 @@
 import { Listener } from "../../lib/Listener";
 
-import { globalLogger } from "../../utils";
-
 export default class UncaughtExceptionListener extends Listener {
     public constructor() {
         super("uncaughtException", {
@@ -16,7 +14,7 @@ export default class UncaughtExceptionListener extends Listener {
         error: Error,
         origin: NodeJS.UncaughtExceptionOrigin
     ): Promise<void> {
-        return globalLogger.error(
+        return global.logger.error(
             `Uncaught exception: ${error.stack}\nOrigin: ${origin}`,
             "process",
             true

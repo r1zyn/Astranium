@@ -1,7 +1,5 @@
 import { Listener } from "../../lib/Listener";
 
-import { globalLogger } from "../../utils";
-
 export default class UnhandledRejectionListener extends Listener {
     public constructor() {
         super("unhandledRejection", {
@@ -12,7 +10,7 @@ export default class UnhandledRejectionListener extends Listener {
     }
 
     public async exec(_process: NodeJS.Process, error: Error): Promise<void> {
-        return globalLogger.error(
+        return global.logger.error(
             `Unhandled rejection: ${error.stack}`,
             "process"
         );

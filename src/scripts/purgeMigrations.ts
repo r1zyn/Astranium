@@ -1,4 +1,3 @@
-import { globalLogger } from "../utils";
 import { join } from "path";
 import { readdirSync, rmdirSync, rmSync, statSync } from "fs";
 
@@ -33,7 +32,7 @@ if (migrationFolders.length > 0) {
             } Prisma migrations from ${generatePath()}`
         );
     } catch (error) {
-        globalLogger.error(error, "prisma");
+        global.logger.error(error, "prisma");
     }
 } else {
     console.log(`No migration folders found in ${generatePath()}`);

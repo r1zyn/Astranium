@@ -1,13 +1,22 @@
 import {
+    ActionRowBuilder,
     APIEmbed,
     ApplicationCommandOption,
     BaseFetchOptions,
+    ButtonBuilder,
+    ButtonInteraction,
+    ButtonStyle,
+    CacheType,
     Client,
+    ComponentType,
     EmbedBuilder,
     EmbedData,
     Guild,
     GuildBasedChannel,
     GuildMember,
+    InteractionCollector,
+    InteractionReplyOptions,
+    InteractionResponse,
     PermissionsString,
     version
 } from "discord.js";
@@ -24,7 +33,6 @@ import { Formatter } from "./Formatter";
 import { SubCommand } from "./SubCommand";
 
 import { arch, hostname, platform, release, userInfo } from "os";
-import { globalLogger } from "../utils";
 
 import config from "../../astranium.config";
 
@@ -33,12 +41,23 @@ export class Util {
         return Formatter.capitalize(dirname.split("\\").pop() as string);
     }
 
+    public static async createMember(
+        client: AstraniumClient,
+        id: string
+    ): Promise<void> {
+        if (!(await client.db.member.findUnique({ where: { id } }))) {
+            await client.db.member.create({ data: { id } });
+        }
+    }
+
     public static createOption<A extends ApplicationCommandOption, O>(
         arg: A,
         option: O
     ): O {
         Object.keys(arg).forEach((key: string): void => {
-            if (key !== "type") { option[`set${Formatter.capitalize(key)}`](arg[key]); }
+            if (key !== "type") {
+                option[`set${Formatter.capitalize(key)}`](arg[key]);
+            }
         });
 
         return option;
@@ -49,9 +68,9 @@ export class Util {
             options.color
                 ? options
                 : {
-                    ...(options as Omit<EmbedData, "color">),
-                    color: Constants.Embed.colors.default
-                }
+                      ...(options as Omit<EmbedData, "color">),
+                      color: Constants.Embed.colors.default
+                  }
         );
     }
 
@@ -59,7 +78,7 @@ export class Util {
         interaction: SlashCommandInteraction,
         { emitter, ephemeral = true, error, kill = false, method }: ErrorOptions
     ): void {
-        globalLogger.error(error, emitter, kill);
+        global.logger.error(error, emitter, kill);
 
         const embed: EmbedBuilder = this.embed({
             author: {
@@ -99,15 +118,23 @@ export class Util {
         return await guild.members.fetch(options);
     }
 
-    public static async handleSubCommands(client: AstraniumClient, command: Command, interaction: SlashCommandInteraction): Promise<void> {
-        const subCommandName: string = await interaction.options.getSubcommand(true);
+    public static async handleSubCommands(
+        client: AstraniumClient,
+        command: Command,
+        interaction: SlashCommandInteraction
+    ): Promise<void> {
+        const subCommandName: string = await interaction.options.getSubcommand(
+            true
+        );
 
         if (command.subcommands) {
-            command.subcommands.forEach(async (subcommand: SubCommand): Promise<void> => {
-                if (subCommandName === subcommand.name) {
-                    await subcommand.exec(client, interaction);
+            command.subcommands.forEach(
+                async (subcommand: SubCommand): Promise<void> => {
+                    if (subCommandName === subcommand.name) {
+                        await subcommand.exec(client, interaction);
+                    }
                 }
-            });
+            );
         }
     }
 
@@ -125,17 +152,132 @@ export class Util {
         return result.join("");
     }
 
-    public static paginate<T extends []>(
+    public static async paginate<T extends any[] = any[]>(
         arr: T,
         itemsPerPage: number,
-        page: number = 1
-    ): T | null {
+        interaction: SlashCommandInteraction<"cached">,
+        dataField: keyof EmbedData,
+        embedOptions?: EmbedData
+    ): Promise<void> {
+        let currentPage: number = 1;
+        const data: InteractionReplyOptions[] = [];
         const maxPages: number = Math.ceil(arr.length / itemsPerPage);
-        if (page < 1 || page > maxPages) return null;
-        return arr.slice(
-            (page - 1) * itemsPerPage,
-            page * itemsPerPage
-        ) as T;
+
+        for (let i: number = 0; i < maxPages; i++) {
+            const page: number = i + 1;
+            const pages: T = arr.slice(
+                (page - 1) * itemsPerPage,
+                page * itemsPerPage
+            ) as T;
+
+            const embed: EmbedBuilder = this.embed({
+                author: {
+                    name: `${embedOptions?.author?.name} (Page ${page}/${maxPages})`,
+                    iconURL: embedOptions?.author?.iconURL,
+                    url: embedOptions?.author?.url
+                },
+                color: embedOptions?.color,
+                title: embedOptions?.title,
+                url: embedOptions?.url,
+                type: embedOptions?.type,
+                provider: embedOptions?.provider,
+                description: embedOptions?.description,
+                thumbnail: embedOptions?.thumbnail,
+                fields: embedOptions?.fields,
+                image: embedOptions?.image,
+                footer: {
+                    text: `Viewing page ${i + 1}/${maxPages}${
+                        embedOptions?.footer?.text
+                            ? `  •  ${embedOptions.footer.text}`
+                            : ""
+                    }`,
+                    iconURL: embedOptions?.footer?.iconURL
+                },
+                timestamp: embedOptions?.timestamp
+            });
+
+            if (dataField === "fields") {
+                embed.addFields(...pages);
+            } else {
+                embed[dataField] = pages.join("\n");
+            }
+
+            data.push({
+                embeds: [embed],
+                components: [
+                    new ActionRowBuilder<ButtonBuilder>().addComponents(
+                        new ButtonBuilder()
+                            .setStyle(ButtonStyle.Primary)
+                            .setCustomId("first")
+                            .setEmoji("⏮️")
+                            .setDisabled(i === 0),
+                        new ButtonBuilder()
+                            .setStyle(ButtonStyle.Secondary)
+                            .setCustomId("previous")
+                            .setEmoji("◀️")
+                            .setDisabled(i === 0),
+                        new ButtonBuilder()
+                            .setStyle(ButtonStyle.Secondary)
+                            .setCustomId("next")
+                            .setEmoji("▶️")
+                            .setDisabled(i === maxPages - 1),
+                        new ButtonBuilder()
+                            .setStyle(ButtonStyle.Primary)
+                            .setCustomId("last")
+                            .setEmoji("⏭️")
+                            .setDisabled(i === maxPages - 1)
+                    )
+                ]
+            });
+        }
+
+        const buttons: string[] = ["first", "previous", "next", "last"];
+        const msg: InteractionResponse<boolean> = await interaction.reply(
+            data[0]
+        );
+
+        if (!interaction.channel) return;
+        const collector: InteractionCollector<ButtonInteraction<CacheType>> =
+            msg.createMessageComponentCollector({
+                filter: (i: ButtonInteraction<CacheType>): boolean =>
+                    i.isButton() && buttons.includes(i.customId),
+                componentType: ComponentType.Button
+            });
+
+        collector.on(
+            "collect",
+            (collected: ButtonInteraction<CacheType>): void => {
+                if (collected.user.id !== interaction.member.user.id) {
+                    return this.warn(interaction, {
+                        message:
+                            "This interaction is not available for you to use."
+                    });
+                }
+
+                switch (collected.customId) {
+                    case "first":
+                        currentPage = 1;
+                        collected.deferUpdate();
+                        interaction.editReply(data[0]);
+                        break;
+                    case "previous":
+                        currentPage--;
+                        collected.deferUpdate();
+                        interaction.editReply(data[currentPage - 1]);
+                        break;
+                    case "next":
+                        currentPage++;
+                        collected.deferUpdate();
+                        interaction.editReply(data[currentPage - 1]);
+                        break;
+                    case "last":
+                        currentPage = data.length - 1;
+                        collected.deferUpdate();
+                        interaction.editReply(data[data.length - 1]);
+                        break;
+                }
+            }
+        );
     }
 
     public static permissionsEmbed(
@@ -148,20 +290,24 @@ export class Util {
 
         return this.embed({
             author: {
-                name: `Whoops! Looks like ${isMember ? "you're" : `${client.user.username} is`
-                    } missing permissions to run this command.`,
+                name: `Whoops! Looks like ${
+                    isMember ? "you're" : `${client.user.username} is`
+                } missing permissions to run this command.`,
                 iconURL: client.user.displayAvatarURL()
             },
-            description: `Hey there, ${interaction.user
-                }! Looks like you tried to run the ${Formatter.commandMention(
-                    interaction.commandName,
-                    interaction.commandId
-                )} command, but unfortunately, due to missing permissions, ${client.user
-                } was unable to run this command. To be able to run the command, ensure ${isMember ? "you have" : `${client.user} has`
-                } the following permissions: ${Formatter.missingPermissions(
-                    member,
-                    permissions
-                )}`,
+            description: `Hey there, ${
+                interaction.user
+            }! Looks like you tried to run the ${Formatter.commandMention(
+                interaction.commandName,
+                interaction.commandId
+            )} command, but unfortunately, due to missing permissions, ${
+                client.user
+            } was unable to run this command. To be able to run the command, ensure ${
+                isMember ? "you have" : `${client.user} has`
+            } the following permissions: ${Formatter.missingPermissions(
+                member,
+                permissions
+            )}`,
             footer: {
                 text: "Can't change permissions? Try contacting a server administrator to resolve this issue."
             }
@@ -184,9 +330,10 @@ export class Util {
             { name: "Node.js Version", value: process.version },
             { name: "discord.js Version", value: `v${version}` },
             "\n"
-        ].forEach((line: string | { name: string; value: string; }): void => {
-            if (typeof line === "string") { console.log(line); }
-            else {
+        ].forEach((line: string | { name: string; value: string }): void => {
+            if (typeof line === "string") {
+                console.log(line);
+            } else {
                 console.log(
                     `${"\u0020".repeat(3)}${line.name}${"\u0020".repeat(
                         23 - line.name.length

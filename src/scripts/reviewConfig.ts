@@ -1,20 +1,20 @@
-import { globalLogger } from "../utils";
+import type { AstraniumConfig } from "../lib/Client";
 
-export function reviewConfig(config: any): void {
-    globalLogger.info(
+export function reviewConfig(config: AstraniumConfig): void {
+    global.logger.info(
         "Reviewing configuration, this will only take a moment...",
         "config"
     );
 
     if (typeof config !== "object") {
-        return globalLogger.error(
+        return global.logger.error(
             "An invalid configuration was provided (not an object)",
             "config",
             true
         );
     }
 
-    const options: { key: string; type: string; }[] = [
+    const options: { key: string; type: string }[] = [
         { key: "clientID", type: "string" },
         { key: "clientOptions", type: "object" },
         { key: "guildID", type: "string" },
@@ -25,17 +25,17 @@ export function reviewConfig(config: any): void {
         { key: "version", type: "string" }
     ];
 
-    options.forEach((option: { key: string; type: string; }): void => {
+    options.forEach((option: { key: string; type: string }): void => {
         if (!(option.key in config)) {
-            return globalLogger.error(
+            return global.logger.error(
                 `Configuration is missing "${option.key}" option`,
                 "config",
                 true
             );
-        }
-        else if (typeof config[option.key] !== option.type) {
-            return globalLogger.error(
-                `Invalid value provided for "${option.key}" option (expected: ${option.type
+        } else if (typeof config[option.key] !== option.type) {
+            return global.logger.error(
+                `Invalid value provided for "${option.key}" option (expected: ${
+                    option.type
                 }, received: ${typeof config[option.key]})`,
                 "config",
                 true
@@ -45,7 +45,7 @@ export function reviewConfig(config: any): void {
 
     ["intents", "partials"].forEach((option: string): void => {
         if (!(option in config.clientOptions)) {
-            return globalLogger.error(
+            return global.logger.error(
                 `Configuration "clientOptions" option is missing ${option} option`,
                 "config",
                 true
@@ -55,7 +55,7 @@ export function reviewConfig(config: any): void {
 
     ["clientID", "guildID"].forEach((option: string): void => {
         if (!config[option].match(/\d{18}/g)) {
-            return globalLogger.error(
+            return global.logger.error(
                 `Configuration "${option}" option value is invalid snowflake`,
                 "config",
                 true
@@ -65,7 +65,7 @@ export function reviewConfig(config: any): void {
 
     config.owners.forEach((snowflake: string): void => {
         if (!snowflake.match(/\d{18}/g)) {
-            return globalLogger.error(
+            return global.logger.error(
                 `Configuration owner ID "${snowflake}" is invalid snowflake`,
                 "config",
                 true
@@ -74,7 +74,7 @@ export function reviewConfig(config: any): void {
     });
 
     if (!config.token.match(/[A-Za-z\d]{23}\.[\w-]{6}\.[\w-]{27}/g)) {
-        return globalLogger.error(
+        return global.logger.error(
             "Invalid bot token provided in configuration",
             "config",
             true

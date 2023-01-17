@@ -1,8 +1,6 @@
 import { Constants } from "../../constants";
 import { Listener } from "../../lib/Listener";
 
-import { globalLogger } from "../../utils";
-
 export default class ExitListener extends Listener {
     public constructor() {
         super("exit", {
@@ -15,7 +13,7 @@ export default class ExitListener extends Listener {
     public async exec(_process: NodeJS.Process, code: number): Promise<void> {
         await Constants.Prisma.$disconnect();
 
-        globalLogger.info(
+        global.logger.info(
             `Exiting with code ${code} (${Constants.ProcessExitCodes[code]})`,
             "process"
         );

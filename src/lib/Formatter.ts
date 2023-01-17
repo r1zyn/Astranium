@@ -26,6 +26,17 @@ export class Formatter {
             : first.toLocaleUpperCase() + rest.join("");
     }
 
+    public static caseType(type: string): string {
+        return type
+            .replaceAll("_", " ")
+            .split(" ")
+            .map(
+                (word: string) =>
+                    word[0] + word.substring(1, word.length).toLowerCase()
+            )
+            .join(" ");
+    }
+
     public static commandMention(
         name: string,
         id: string

@@ -13,7 +13,7 @@ export default class GuildMemberRemoveListener extends Listener {
     }
 
     public async exec(
-        _client: AstraniumClient,
+        client: AstraniumClient,
         member: GuildMember
     ): Promise<void> {
         if (member.partial) await member.fetch();
@@ -41,8 +41,7 @@ export default class GuildMemberRemoveListener extends Listener {
                         .size.toString()
                 )
             );
-        }
-        else {
+        } else {
             members.setName(
                 members.name.replace(
                     /\d+/,
@@ -52,5 +51,12 @@ export default class GuildMemberRemoveListener extends Listener {
                 )
             );
         }
+
+        (await member.guild.members.fetch())
+            .filter((member: GuildMember): boolean => !member.user.bot)
+            .forEach(
+                async (member: GuildMember): Promise<void> =>
+                    await client.util.createMember(client, member.id)
+            );
     }
 }

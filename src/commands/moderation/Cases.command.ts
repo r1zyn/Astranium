@@ -1,0 +1,85 @@
+// Note: figure out why src/ doesn't work for paths
+
+import {
+    ApplicationCommandOptionType,
+    EmbedField,
+    GuildMember,
+    User
+} from "discord.js";
+import { AstraniumClient } from "../../lib/Client";
+import { Command } from "../../lib/Command";
+import type { ModerationCase } from "@prisma/client";
+import type { SlashCommandInteraction } from "../../types";
+import { Constants } from "../../constants";
+
+export default class CasesCommand extends Command {
+    public constructor() {
+        super("cases", {
+            args: [
+                {
+                    name: "member",
+                    description: "The member to view the moderation cases for.",
+                    required: false,
+                    type: ApplicationCommandOptionType.User
+                }
+            ],
+            category: "Moderation",
+            description:
+                "View the list of moderation cases for a server member.",
+            examples: ["cases", "cases @tncz"],
+            ownerOnly: false,
+            permissions: {
+                user: ["ModerateMembers"]
+            },
+            usage: "cases [member]"
+        });
+    }
+
+    public async exec(
+        client: AstraniumClient,
+        interaction: SlashCommandInteraction<"cached">
+    ): Promise<void> {
+        function formatCase(moderationCase: ModerationCase): EmbedField {
+            return {
+                name: `${Constants.Emojis["discord_id"]} **${moderationCase.caseId}**`,
+                value: `**Case Type:** ${client.formatter.caseType(
+                    moderationCase.type
+                )}\n**Date:** ${client.formatter.time(moderationCase.date)}`,
+                inline: true
+            };
+        }
+
+        const user: User | null = interaction.options.getUser("member");
+        const member: GuildMember = user
+            ? await interaction.guild.members.fetch(user)
+            : interaction.member;
+        const cases: EmbedField[] = (
+            await client.db.moderationCase.findMany({
+                where: { memberId: member.id }
+            })
+        ).map(formatCase);
+
+        if (cases.length === 0) {
+            return client.util.warn(interaction, {
+                message:
+                    "No moderation cases were found for the specified server member."
+            });
+        }
+
+        await client.util.paginate<EmbedField[]>(
+            cases,
+            6,
+            interaction,
+            "fields",
+            {
+                author: {
+                    name: `${member.user.tag} - Server Moderation Cases`,
+                    iconURL: member.user.displayAvatarURL()
+                },
+                footer: {
+                    text: `${cases.length} moderation cases in total`
+                }
+            }
+        );
+    }
+}

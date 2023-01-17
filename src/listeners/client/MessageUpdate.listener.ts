@@ -36,7 +36,9 @@ export default class MessageUpdateListener extends Listener {
                     newMessage.attachments.first();
 
                 if (!starboard) return;
-                if (newMessage.channel.id === Constants.Channels["starboard"]) { return; }
+                if (newMessage.channel.id === Constants.Channels["starboard"]) {
+                    return;
+                }
 
                 const embed: EmbedBuilder = client.util
                     .embed({

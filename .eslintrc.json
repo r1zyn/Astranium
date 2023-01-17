@@ -69,7 +69,7 @@
             }
         ],
         "no-undef": "off",
-        "no-var": "error",
+        "no-var": "off",
         "object-curly-spacing": [
             "error",
             "always"

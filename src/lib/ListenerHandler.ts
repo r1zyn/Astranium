@@ -34,8 +34,7 @@ export class ListenerHandler {
                         listener.name.toString(),
                         listener.exec.bind(null, this.client)
                     );
-                }
-                else {
+                } else {
                     this.client.on(
                         listener.name.toString(),
                         listener.exec.bind(null, this.client)
@@ -49,8 +48,7 @@ export class ListenerHandler {
                         listener.name,
                         listener.exec.bind(null, process)
                     );
-                }
-                else {
+                } else {
                     process.on(
                         listener.name,
                         listener.exec.bind(null, process)
@@ -100,10 +98,10 @@ export class ListenerHandler {
                 ).filter((file: string): boolean =>
                     file.endsWith(".listener.js")
                 )) {
-                    const Instance: typeof Listener = (
+                    const Instance: new () => Listener = (
                         (await import(
                             `${this.options.directory}/${subdirectory}/${file}`
-                        )) as { default: typeof Listener; }
+                        )) as { default: new () => Listener }
                     ).default;
                     if (!Instance) {
                         return this.client.logger.error(
@@ -123,7 +121,6 @@ export class ListenerHandler {
                         );
                     }
 
-                    // @ts-ignore
                     const listener: Listener = new Instance();
                     listener.exec = Instance.prototype.exec;
 
@@ -156,9 +153,9 @@ export class ListenerHandler {
                 .filter((file: string): boolean =>
                     file.endsWith(".listener.js")
                 )) {
-                const Instance: typeof Listener = (
+                const Instance: new () => Listener = (
                     (await import(`${this.options.directory}/${file}`)) as {
-                        default: typeof Listener;
+                        default: new () => Listener;
                     }
                 ).default;
                 if (!Instance) {
@@ -179,7 +176,6 @@ export class ListenerHandler {
                     );
                 }
 
-                // @ts-ignore
                 const listener: Listener = new Instance();
                 listener.exec = Instance.prototype.exec;
 

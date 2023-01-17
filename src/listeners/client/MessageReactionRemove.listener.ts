@@ -21,7 +21,11 @@ export default class MessageReactionRemoveListener extends Listener {
         if (reaction.partial) await reaction.fetch();
 
         if (reaction.message.guild && reaction.message.author) {
-            if (reaction.message.channel.id === Constants.Channels["starboard"]) { return; }
+            if (
+                reaction.message.channel.id === Constants.Channels["starboard"]
+            ) {
+                return;
+            }
 
             if (reaction.emoji.name === Constants.Emojis["star"]) {
                 const starboard: TextChannel | null =

@@ -102,8 +102,6 @@ export class Constants {
         white_timer: "<:white_timer:1061577808599593010>"
     };
 
-    // Note: add success, error and warning emojis and add them to error and warn functions and success messages
-
     public static Prisma: PrismaClient = new PrismaClient();
 
     public static ProcessExitCodes = {

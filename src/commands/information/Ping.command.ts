@@ -4,7 +4,7 @@ import { Constants } from "../../constants";
 import type { Message } from "discord.js";
 import type { SlashCommandInteraction } from "../../types";
 
-import moment from "moment";
+import ms from "ms";
 
 export default class PingCommand extends Command {
     public constructor() {
@@ -32,10 +32,6 @@ export default class PingCommand extends Command {
             ],
             fetchReply: true
         });
-
-        const start: moment.Moment = moment(client.uptime);
-        const end: moment.Moment = moment(Date.now());
-        const diff: number = end.diff(start);
 
         return interaction.editReply({
             embeds: [
@@ -76,9 +72,7 @@ export default class PingCommand extends Command {
                             name: `${Constants.Emojis["clyde"]} Client Uptime`,
                             value: client.formatter.languageCodeBlock(
                                 "md",
-                                `> ${moment
-                                    .utc(moment(diff).milliseconds())
-                                    .format("DD[d]HH:mm:ss.SSS")}`
+                                `> ${ms(client.uptime)}`
                             ),
                             inline: true
                         }

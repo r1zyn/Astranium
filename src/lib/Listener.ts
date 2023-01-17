@@ -1,7 +1,5 @@
 import type { ClientEvents } from "discord.js";
 
-import { globalLogger } from "../utils";
-
 export class Listener {
     public category: string;
     public emitter: ListenerEmitter;
@@ -16,7 +14,7 @@ export class Listener {
     }
 
     public async exec(..._args: any[]): Promise<any> {
-        globalLogger.error(
+        global.logger.error(
             `Listener class ${this.constructor.name} "exec" method has not been implemented`,
             `${this.constructor.name.replace("Listener", "")}Listener`,
             true

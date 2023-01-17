@@ -5,13 +5,13 @@ import {
     Message,
     TextChannel
 } from "discord.js";
-import type { AstraniumClient } from "../../../lib/Client";
-import { Constants } from "../../../constants";
+import type { AstraniumClient } from "../../../../lib/Client";
+import { Constants } from "../../../../constants";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../../types";
-import { SubCommand } from "../../../lib/SubCommand";
+import type { SlashCommandInteraction } from "../../../../types";
+import { SubCommand } from "../../../../lib/SubCommand";
 
-export default class RemoveCommand extends SubCommand {
+export default class RemoveSubCommand extends SubCommand {
     public constructor() {
         super("remove", {
             args: [
@@ -43,7 +43,8 @@ export default class RemoveCommand extends SubCommand {
             );
         const caseId: string = interaction.options.getString("id", true);
         const reason: string | null = interaction.options.getString("reason");
-        const warnCase: ModerationCase | null = await client.db.moderationCase.findUnique({ where: { caseId } });
+        const warnCase: ModerationCase | null =
+            await client.db.moderationCase.findUnique({ where: { caseId } });
 
         if (!warnCase) {
             return client.util.warn(interaction, {
@@ -51,7 +52,9 @@ export default class RemoveCommand extends SubCommand {
             });
         }
 
-        const member: GuildMember = await interaction.guild.members.fetch(warnCase.memberId);
+        const member: GuildMember = await interaction.guild.members.fetch(
+            warnCase.memberId
+        );
 
         if (
             interaction.member.roles.highest.comparePositionTo(
@@ -83,7 +86,9 @@ export default class RemoveCommand extends SubCommand {
                         },
                         {
                             name: "Removal Reason",
-                            value: reason ?? "No reason was provided by the moderator.",
+                            value:
+                                reason ??
+                                "No reason was provided by the moderator.",
                             inline: true
                         }
                     ]
@@ -98,7 +103,7 @@ export default class RemoveCommand extends SubCommand {
                 await interaction.reply({
                     embeds: [
                         client.util.embed({
-                            description: `${Constants.Emojis.white_check_mark} Successfully removed warn case **${caseId}** for ${member}.`
+                            description: `${Constants.Emojis.white_check_mark} Successfully removed warn from ${member} (**ID:** ${caseId})`
                         })
                     ],
                     ephemeral: true

@@ -42,8 +42,7 @@ export default class GuildMemberAddListener extends Listener {
                         .size.toString()
                 )
             );
-        }
-        else {
+        } else {
             members.setName(
                 members.name.replace(
                     /\d+/,
@@ -57,6 +56,16 @@ export default class GuildMemberAddListener extends Listener {
         const cachedMember: Member | null = await client.db.member.findUnique({
             where: { id: member.id }
         });
-        if (!cachedMember && !member.user.bot) { await client.db.member.create({ data: { id: member.id } }); }
+
+        if (!cachedMember && !member.user.bot) {
+            await client.db.member.create({ data: { id: member.id } });
+        }
+
+        (await member.guild.members.fetch())
+            .filter((member: GuildMember): boolean => !member.user.bot)
+            .forEach(
+                async (member: GuildMember): Promise<void> =>
+                    await client.util.createMember(client, member.id)
+            );
     }
 }

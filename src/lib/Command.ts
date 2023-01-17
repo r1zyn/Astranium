@@ -12,7 +12,6 @@ import {
     ApplicationCommandRoleOption,
     ApplicationCommandStringOption,
     ApplicationCommandUserOption,
-    CommandInteraction,
     PermissionFlagsBits,
     PermissionsString,
     SlashCommandAttachmentOption,
@@ -203,20 +202,25 @@ export class Command extends SlashCommandBuilder {
                     }
                 }
             });
-        
+
         options.subcommands &&
-            options.subcommands.forEach((subcommand: SubCommand): SlashCommandSubcommandsOnlyBuilder => this.addSubcommand(subcommand));
+            options.subcommands.forEach(
+                (subcommand: SubCommand): SlashCommandSubcommandsOnlyBuilder =>
+                    this.addSubcommand(subcommand)
+            );
     }
 
     public async exec(
         client: AstraniumClient,
         interaction: SlashCommandInteraction
     ): Promise<any> {
-        this.subcommands ? await client.util.handleSubCommands(client, this, interaction) : client.logger.error(
-            `Command class ${this.constructor.name} "exec" method has not been implemented`,
-            `${this.constructor.name.replace("Command", "")}Command`,
-            true
-        );
+        this.subcommands
+            ? await client.util.handleSubCommands(client, this, interaction)
+            : client.logger.error(
+                  `Command class ${this.constructor.name} "exec" method has not been implemented`,
+                  `${this.constructor.name.replace("Command", "")}Command`,
+                  true
+              );
     }
 
     public setAliases(aliases?: string[]): this {

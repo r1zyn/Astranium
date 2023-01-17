@@ -6,14 +6,14 @@ import {
     Message,
     TextChannel
 } from "discord.js";
-import type { AstraniumClient } from "../../../lib/Client";
-import { CaseType } from "../../../enums";
-import { Constants } from "../../../constants";
+import type { AstraniumClient } from "../../../../lib/Client";
+import { CaseType } from "../../../../enums";
+import { Constants } from "../../../../constants";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../../types";
-import { SubCommand } from "../../../lib/SubCommand";
+import type { SlashCommandInteraction } from "../../../../types";
+import { SubCommand } from "../../../../lib/SubCommand";
 
-export default class AddCommand extends SubCommand {
+export default class AddSubCommand extends SubCommand {
     public constructor() {
         super("add", {
             args: [
@@ -78,10 +78,6 @@ export default class AddCommand extends SubCommand {
             });
         }
 
-        if (!await client.db.member.findUnique({ where: { id: member.id } })) {
-            await client.db.member.create({ data: { id: member.id } });
-        }
-
         while (
             await client.db.moderationCase.findUnique({ where: { caseId } })
         ) {
@@ -104,14 +100,15 @@ export default class AddCommand extends SubCommand {
                         name: `${interaction.guild.name} - Server Warn (Case ID ${caseId})`,
                         iconURL: interaction.guild.iconURL() ?? undefined
                     },
-                    description: `You were warned in ${interaction.guild.name
-                        } at ${client.formatter.time(
-                            moderationCase.date
-                        )}. This is your **${caseNumber}${client.formatter.suffix(
-                            caseNumber
-                        )}** moderation case and **${warnNumber}${client.formatter.suffix(
-                            warnNumber
-                        )}** server warn.`,
+                    description: `You were warned in ${
+                        interaction.guild.name
+                    } at ${client.formatter.time(
+                        moderationCase.date
+                    )}. This is your **${caseNumber}${client.formatter.suffix(
+                        caseNumber
+                    )}** moderation case and **${warnNumber}${client.formatter.suffix(
+                        warnNumber
+                    )}** server warn.`,
                     fields: [
                         {
                             name: "Responsible Moderator",
@@ -155,13 +152,16 @@ export default class AddCommand extends SubCommand {
                 let isDMable: boolean = true;
 
                 if (!member.dmChannel) {
-                    await member.createDM()
-                        .then(async (dm: DMChannel): Promise<Message<false>> => {
-                            return await dm.send({
-                                embeds: [memberEmbed]
-                            });
-                        })
-                        .catch((): boolean => isDMable = false);
+                    await member
+                        .createDM()
+                        .then(
+                            async (dm: DMChannel): Promise<Message<false>> => {
+                                return await dm.send({
+                                    embeds: [memberEmbed]
+                                });
+                            }
+                        )
+                        .catch((): boolean => (isDMable = false));
                 } else {
                     await member.dmChannel.send({
                         embeds: [memberEmbed]
@@ -177,7 +177,13 @@ export default class AddCommand extends SubCommand {
                 await interaction.reply({
                     embeds: [
                         client.util.embed({
-                            description: `${Constants.Emojis.white_check_mark} Successfully created warn case **${caseId}** for ${member}. ${!isDMable ? "User was unable to be DMed." : ""}`
+                            description: `${
+                                Constants.Emojis.white_check_mark
+                            } Successfully warned ${member} (**ID:** ${
+                                moderationCase.caseId
+                            }) ${
+                                !isDMable ? "User was unable to be DMed." : ""
+                            }`
                         })
                     ],
                     ephemeral: true

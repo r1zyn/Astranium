@@ -1,15 +1,11 @@
-import {
-    ApplicationCommandOptionType,
-    GuildMember,
-    Message,
-} from "discord.js";
-import type { AstraniumClient } from "../../../lib/Client";
-import { CaseType } from "../../../enums";
+import { ApplicationCommandOptionType, GuildMember, Message } from "discord.js";
+import type { AstraniumClient } from "../../../../lib/Client";
+import { CaseType } from "../../../../enums";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../../types";
-import { SubCommand } from "../../../lib/SubCommand";
+import type { SlashCommandInteraction } from "../../../../types";
+import { SubCommand } from "../../../../lib/SubCommand";
 
-export default class ViewCommand extends SubCommand {
+export default class ViewSubCommand extends SubCommand {
     public constructor() {
         super("view", {
             args: [
@@ -29,7 +25,8 @@ export default class ViewCommand extends SubCommand {
         interaction: SlashCommandInteraction<"cached">
     ): Promise<void | Message<boolean>> {
         const caseId: string = interaction.options.getString("id", true);
-        const warnCase: ModerationCase | null = await client.db.moderationCase.findUnique({ where: { caseId } });
+        const warnCase: ModerationCase | null =
+            await client.db.moderationCase.findUnique({ where: { caseId } });
 
         if (!warnCase) {
             return client.util.warn(interaction, {
@@ -37,8 +34,12 @@ export default class ViewCommand extends SubCommand {
             });
         }
 
-        const member: GuildMember = await interaction.guild.members.fetch(warnCase.memberId);
-        const moderator: GuildMember = await interaction.guild.members.fetch(warnCase.moderatorId);
+        const member: GuildMember = await interaction.guild.members.fetch(
+            warnCase.memberId
+        );
+        const moderator: GuildMember = await interaction.guild.members.fetch(
+            warnCase.moderatorId
+        );
 
         const caseNumber: number =
             (

@@ -73,13 +73,25 @@ export class CommandHandler {
                 }
 
                 if (interaction.inCachedGuild()) {
-                    if (!await this.client.db.member.findUnique({ where: { id: interaction.member.id } })) {
-                        await this.client.db.member.create({ data: { id: interaction.member.id } })
-                            .catch((error: Error): void => this.client.logger.error(error, "commandHandler", false));
+                    if (
+                        !(await this.client.db.member.findUnique({
+                            where: { id: interaction.member.id }
+                        }))
+                    ) {
+                        await this.client.db.member
+                            .create({ data: { id: interaction.member.id } })
+                            .catch((error: Error): void =>
+                                this.client.logger.error(
+                                    error,
+                                    "commandHandler",
+                                    false
+                                )
+                            );
                     }
 
                     if (command.permissions) {
-                        const me: GuildMember | null = interaction.guild.members.me;
+                        const me: GuildMember | null =
+                            interaction.guild.members.me;
                         if (!me) return;
 
                         if (command.permissions.client) {
@@ -152,10 +164,10 @@ export class CommandHandler {
                 ).filter((file: string): boolean =>
                     file.endsWith(".command.js")
                 )) {
-                    const Instance: typeof Command = (
+                    const Instance: new () => Command = (
                         (await import(
                             `${this.options.directory}/${subdirectory}/${file}`
-                        )) as { default: typeof Command }
+                        )) as { default: new () => Command }
                     ).default;
                     if (!Instance) {
                         return this.client.logger.error(
@@ -175,8 +187,7 @@ export class CommandHandler {
                         );
                     }
 
-                    // @ts-ignore
-                    const command: Command = new Instance(); // The instance doesn't require any arguments for its constructor, so we can ignore TypeScript's error here
+                    const command: Command = new Instance();
                     command.exec = Instance.prototype.exec;
 
                     if (!this.categories.get(command.category.toLowerCase())) {
@@ -200,7 +211,6 @@ export class CommandHandler {
 
                     if (command.aliases) {
                         for (const alias of command.aliases) {
-                            // @ts-ignore
                             const aliasCommand: Command = new Instance();
                             aliasCommand.setName(alias);
                             aliasCommand.exec = Instance.prototype.exec;
@@ -217,9 +227,9 @@ export class CommandHandler {
                 .filter((file: string): boolean =>
                     file.endsWith(".command.js")
                 )) {
-                const Instance: typeof Command = (
+                const Instance: new () => Command = (
                     (await import(`${this.options.directory}/${file}`)) as {
-                        default: typeof Command;
+                        default: new () => Command;
                     }
                 ).default;
                 if (!Instance) {
@@ -240,7 +250,6 @@ export class CommandHandler {
                     );
                 }
 
-                // @ts-ignore
                 const command: Command = new Instance();
                 command.exec = Instance.prototype.exec;
 
@@ -262,7 +271,6 @@ export class CommandHandler {
 
                 if (command.aliases) {
                     for (const alias of command.aliases) {
-                        // @ts-ignore
                         const aliasCommand: Command = new Instance();
                         aliasCommand.setName(alias);
                         aliasCommand.exec = Instance.prototype.exec;
