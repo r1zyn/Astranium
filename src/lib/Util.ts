@@ -87,6 +87,7 @@ export class Util {
             },
             description: `Hey there, ${interaction.user}. Looks like an internal error occurred while processing your command. Please try again later, and if the problem persists, join the and report the issue.`
         });
+        // Note: change this later
 
         if (method === "reply" || !interaction.channel) {
             interaction.reply({
@@ -156,7 +157,6 @@ export class Util {
         arr: T,
         itemsPerPage: number,
         interaction: SlashCommandInteraction<"cached">,
-        dataField: keyof EmbedData,
         embedOptions?: EmbedData
     ): Promise<void> {
         let currentPage: number = 1;
@@ -181,7 +181,7 @@ export class Util {
                 url: embedOptions?.url,
                 type: embedOptions?.type,
                 provider: embedOptions?.provider,
-                description: embedOptions?.description,
+                description: pages.join("\n"),
                 thumbnail: embedOptions?.thumbnail,
                 fields: embedOptions?.fields,
                 image: embedOptions?.image,
@@ -196,12 +196,6 @@ export class Util {
                 timestamp: embedOptions?.timestamp
             });
 
-            if (dataField === "fields") {
-                embed.addFields(...pages);
-            } else {
-                embed[dataField] = pages.join("\n");
-            }
-
             data.push({
                 embeds: [embed],
                 components: [
@@ -209,22 +203,22 @@ export class Util {
                         new ButtonBuilder()
                             .setStyle(ButtonStyle.Primary)
                             .setCustomId("first")
-                            .setEmoji("⏮️")
+                            .setLabel("❰❰")
                             .setDisabled(i === 0),
                         new ButtonBuilder()
                             .setStyle(ButtonStyle.Secondary)
                             .setCustomId("previous")
-                            .setEmoji("◀️")
+                            .setLabel("❰")
                             .setDisabled(i === 0),
                         new ButtonBuilder()
                             .setStyle(ButtonStyle.Secondary)
                             .setCustomId("next")
-                            .setEmoji("▶️")
+                            .setLabel("❱")
                             .setDisabled(i === maxPages - 1),
                         new ButtonBuilder()
                             .setStyle(ButtonStyle.Primary)
                             .setCustomId("last")
-                            .setEmoji("⏭️")
+                            .setLabel("❱❱")
                             .setDisabled(i === maxPages - 1)
                     )
                 ]

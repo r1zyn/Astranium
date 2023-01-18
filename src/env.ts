@@ -7,6 +7,8 @@ declare global {
 
             BID: string;
             BRAINSHOP_API_KEY: string;
+
+            EVENTS_WEBHOOK: string;
         }
     }
 }
@@ -19,7 +21,9 @@ export const env: NodeJS.ProcessEnv = global.process.env || {
     TOKEN: process.env.TOKEN,
 
     BID: process.env.BID,
-    BRAINSHOP_API_KEY: process.env.BRAINSHOP_API_KEY
+    BRAINSHOP_API_KEY: process.env.BRAINSHOP_API_KEY,
+
+    EVENTS_WEBHOOK: process.env.EVENTS_WEBHOOK
 };
 
 if (process.env.NODE_ENV !== "production") global.process.env = env;

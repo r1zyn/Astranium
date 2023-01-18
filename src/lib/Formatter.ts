@@ -44,6 +44,18 @@ export class Formatter {
         return `</${name}:${id}>`;
     }
 
+    public static day(day: number): string {
+        return [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ][day];
+    }
+
     public static missingPermissions(
         member: GuildMember,
         permissions: PermissionsString[]
@@ -54,6 +66,23 @@ export class Formatter {
                 this.inlineCode(this.permission(permission))
             )
             .join(", ");
+    }
+
+    public static month(month: number): string {
+        return [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ][month];
     }
 
     public static permission: (permission: PermissionsString) => string = (

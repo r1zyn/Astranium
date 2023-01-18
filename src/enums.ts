@@ -1,7 +1,6 @@
 export enum CaseType {
     WARN = "WARN",
-    MUTE = "MUTE",
+    TIMEOUT = "TIMEOUT",
     BAN = "BAN",
-    TEMP_MUTE = "TEMP_MUTE",
     KICK = "KICK"
 }

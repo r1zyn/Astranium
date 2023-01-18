@@ -50,6 +50,13 @@ export default class BanCommand extends Command {
             interaction.options.getUser("member", true)
         );
         const reason: string | null = interaction.options.getString("reason");
+
+        if (
+            !(await client.db.member.findUnique({ where: { id: member.id } }))
+        ) {
+            await client.db.member.create({ data: { id: member.id } });
+        }
+
         const caseNumber: number =
             (
                 await client.db.moderationCase.findMany({

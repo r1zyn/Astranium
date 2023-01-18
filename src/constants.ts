@@ -137,6 +137,11 @@ export class Constants {
         ascension: "927756240543694951",
         legendary: "927756332424105985",
         supreme: "927756402888409109",
-        overlord: "927756486367666207"
+        overlord: "927756486367666207",
+        announcement_ping: "927823328847216650",
+        event_ping: "927823396773982230",
+        giveaway_ping: "927823425647546388",
+        qotd_ping: "927823456349847582",
+        poll_ping: "927823486477557780"
     };
 }

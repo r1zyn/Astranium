@@ -2,7 +2,6 @@ import { Command } from "../../lib/Command";
 
 import AddSubCommand from "../subcommands/moderation/warn/Add.subcommand";
 import RemoveSubCommand from "../subcommands/moderation/warn/Remove.subcommand";
-import ViewSubCommand from "../subcommands/moderation/warn/View.subcommand";
 
 export default class WarnCommand extends Command {
     public constructor() {
@@ -20,11 +19,7 @@ export default class WarnCommand extends Command {
             permissions: {
                 user: ["ModerateMembers"]
             },
-            subcommands: [
-                new AddSubCommand(),
-                new RemoveSubCommand(),
-                new ViewSubCommand()
-            ],
+            subcommands: [new AddSubCommand(), new RemoveSubCommand()],
             usage: "warn add | remove | view"
         });
     }

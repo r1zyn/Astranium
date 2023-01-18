@@ -39,21 +39,26 @@ export default class CasesCommand extends Command {
         client: AstraniumClient,
         interaction: SlashCommandInteraction<"cached">
     ): Promise<void> {
-        function formatCase(moderationCase: ModerationCase): EmbedField {
-            return {
-                name: `${Constants.Emojis["discord_id"]} **${moderationCase.caseId}**`,
-                value: `**Case Type:** ${client.formatter.caseType(
-                    moderationCase.type
-                )}\n**Date:** ${client.formatter.time(moderationCase.date)}`,
-                inline: true
-            };
+        function formatCase(
+            moderationCase: ModerationCase,
+            index: number
+        ): string {
+            return `**${Constants.Emojis["discord_id"]} ${
+                moderationCase.caseId
+            } | No #${index + 1} | Case Type: ${client.formatter.caseType(
+                moderationCase.type
+            )} | ${client.formatter.time(moderationCase.date)}**\n${
+                Constants.Emojis["discord_reply"]
+            } ${moderationCase.reason} - ${client.formatter.userMention(
+                moderationCase.moderatorId
+            )} `;
         }
 
         const user: User | null = interaction.options.getUser("member");
         const member: GuildMember = user
             ? await interaction.guild.members.fetch(user)
             : interaction.member;
-        const cases: EmbedField[] = (
+        const cases: string[] = (
             await client.db.moderationCase.findMany({
                 where: { memberId: member.id }
             })
@@ -66,20 +71,14 @@ export default class CasesCommand extends Command {
             });
         }
 
-        await client.util.paginate<EmbedField[]>(
-            cases,
-            6,
-            interaction,
-            "fields",
-            {
-                author: {
-                    name: `${member.user.tag} - Server Moderation Cases`,
-                    iconURL: member.user.displayAvatarURL()
-                },
-                footer: {
-                    text: `${cases.length} moderation cases in total`
-                }
+        await client.util.paginate<string[]>(cases, 4, interaction, {
+            author: {
+                name: `${member.user.tag} - Server Moderation Cases`,
+                iconURL: member.user.displayAvatarURL()
+            },
+            footer: {
+                text: `${cases.length} moderation cases in total (run /case <id> to view a specific case)`
             }
-        );
+        });
     }
 }
