@@ -6,9 +6,6 @@ logs
 prisma/migrations/**/*
 prisma/dev.db
 
-# typings
-typings
-
 # environment variables
 .env 
 
@@ -17,5 +14,6 @@ node_modules
 yarn.lock
 yarn-error.log
 
-# random
+# other
 objects.js
+ideas.txt
