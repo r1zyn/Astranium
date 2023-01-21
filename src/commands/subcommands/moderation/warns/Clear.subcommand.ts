@@ -5,12 +5,12 @@ import {
 	Message,
 	TextChannel
 } from "discord.js";
-import type { AstraniumClient } from "../../../../lib/Client";
-import { CaseType } from "../../../../typings/enums";
-import { Constants } from "../../../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { CaseType } from "@typings/enums";
+import { Constants } from "@core/constants";
 import type { Prisma } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../../../typings/main";
-import { SubCommand } from "../../../../lib/SubCommand";
+import type { SlashCommandInteraction } from "@typings/main";
+import { SubCommand } from "@lib/SubCommand";
 
 export default class ClearSubCommand extends SubCommand {
 	public constructor() {
@@ -47,17 +47,13 @@ export default class ClearSubCommand extends SubCommand {
 		);
 		const reason: string | null = interaction.options.getString("reason");
 
-		if (
-			!(await client.db.member.findUnique({ where: { id: member.id } }))
-		) {
-			await client.db.member.create({ data: { id: member.id } });
-		}
-
 		if (member.user.bot) {
 			return client.util.warn(interaction, {
 				message: "The specified member cannot be a bot user."
 			});
 		}
+
+		await client.util.syncMember(member);
 
 		if (
 			interaction.member.roles.highest.comparePositionTo(
@@ -67,6 +63,19 @@ export default class ClearSubCommand extends SubCommand {
 			return client.util.warn(interaction, {
 				message:
 					"You cannot remove the warns as the member has either higher or similiar roles."
+			});
+		}
+
+		if (
+			(
+				await client.db.moderationCase.findMany({
+					where: { memberId: member.id, type: CaseType.WARN }
+				})
+			).length === 0
+		) {
+			return client.util.warn(interaction, {
+				message:
+					"The specified member does not have any warn cases to be removed."
 			});
 		}
 

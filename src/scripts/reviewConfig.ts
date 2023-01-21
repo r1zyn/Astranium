@@ -1,4 +1,4 @@
-import type { AstraniumConfig } from "../lib/Client";
+import type { AstraniumConfig } from "@lib/Client";
 
 export function reviewConfig(config: AstraniumConfig): void {
 	global.logger.info(

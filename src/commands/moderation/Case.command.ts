@@ -1,8 +1,8 @@
 import { ApplicationCommandOptionType, GuildMember, Message } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { Command } from "../../lib/Command";
+import type { AstraniumClient } from "@lib/Client";
+import { Command } from "@lib/Command";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../typings/main";
+import type { SlashCommandInteraction } from "@typings/main";
 
 export default class CaseCommand extends Command {
 	public constructor() {
@@ -47,11 +47,7 @@ export default class CaseCommand extends Command {
 			moderationCase.moderatorId
 		);
 
-		if (
-			!(await client.db.member.findUnique({ where: { id: member.id } }))
-		) {
-			await client.db.member.create({ data: { id: member.id } });
-		}
+		await client.util.syncMember(member);
 
 		const caseNumber: number =
 			(

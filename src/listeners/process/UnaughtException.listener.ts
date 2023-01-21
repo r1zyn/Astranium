@@ -1,4 +1,4 @@
-import { Listener } from "../../lib/Listener";
+import { Listener } from "@lib/Listener";
 
 export default class UncaughtExceptionListener extends Listener {
 	public constructor() {

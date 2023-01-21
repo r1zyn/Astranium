@@ -1,8 +1,8 @@
-import type { AstraniumClient } from "../../lib/Client";
-import { Command } from "../../lib/Command";
-import { Constants } from "../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { Command } from "@lib/Command";
+import { Constants } from "@core/constants";
 import type { Message } from "discord.js";
-import type { SlashCommandInteraction } from "../../typings/main";
+import type { SlashCommandInteraction } from "@typings/main";
 
 export default class PingCommand extends Command {
 	public constructor() {

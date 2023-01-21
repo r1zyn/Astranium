@@ -1,6 +1,6 @@
-import { AstraniumClient } from "../../../../lib/Client";
-import { SlashCommandInteraction } from "../../../../typings/main";
-import { SubCommand } from "../../../../lib/SubCommand";
+import { AstraniumClient } from "@lib/Client";
+import { SlashCommandInteraction } from "@typings/main";
+import { SubCommand } from "@lib/SubCommand";
 
 export default class StatsSubCommand extends SubCommand {
 	public constructor() {

@@ -1,5 +1,5 @@
-import type { AstraniumClient } from "../../lib/Client";
-import { Listener } from "../../lib/Listener";
+import type { AstraniumClient } from "@lib/Client";
+import { Listener } from "@lib/Listener";
 
 export default class ErrorListener extends Listener {
 	public constructor() {

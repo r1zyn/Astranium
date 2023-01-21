@@ -24,7 +24,7 @@ model Member {
     verified Boolean          @default(false)
     cases    ModerationCase[]
     xp       Int              @default(0)
-    level    Int              @default(0)
+    level    Int              @default(1)
     about    String?
 }
 

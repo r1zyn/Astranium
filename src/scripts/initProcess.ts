@@ -1,8 +1,8 @@
-import type { AstraniumConfig } from "../lib/Client";
+import type { AstraniumConfig } from "@lib/Client";
 
 import { arch, hostname, platform, userInfo } from "os";
 import { join } from "path";
-import { reviewConfig } from "./reviewConfig";
+import { reviewConfig } from "@scripts/reviewConfig";
 
 export function initProcess(config: AstraniumConfig): void {
 	reviewConfig(config);

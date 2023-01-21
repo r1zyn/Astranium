@@ -1,6 +1,6 @@
 import { ActivityType } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { Listener } from "../../lib/Listener";
+import type { AstraniumClient } from "@lib/Client";
+import { Listener } from "@lib/Listener";
 
 export default class ReadyListener extends Listener {
 	public constructor() {

@@ -23,9 +23,9 @@ import {
 	SlashCommandSubcommandBuilder,
 	SlashCommandUserOption
 } from "discord.js";
-import type { AstraniumClient } from "./Client";
-import type { Localizations } from "./Command";
-import { Util } from "./Util";
+import type { AstraniumClient } from "@lib/Client";
+import type { Localizations } from "@lib/Command";
+import { Util } from "@lib/Util";
 
 export class SubCommand extends SlashCommandSubcommandBuilder {
 	public args?: ApplicationCommandOption[];

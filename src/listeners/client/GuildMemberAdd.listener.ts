@@ -1,6 +1,6 @@
-import type { AstraniumClient } from "../../lib/Client";
+import type { AstraniumClient } from "@lib/Client";
 import type { GuildMember } from "discord.js";
-import { Listener } from "../../lib/Listener";
+import { Listener } from "@lib/Listener";
 
 export default class GuildMemberAddListener extends Listener {
 	public constructor() {

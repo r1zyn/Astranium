@@ -1,8 +1,8 @@
-import type { AstraniumClient } from "./Client";
-import { Category } from "./Category";
+import type { AstraniumClient } from "@lib/Client";
+import { Category } from "@lib/Category";
 import { Collection } from "discord.js";
 import type { EventEmitter } from "node:events";
-import { Listener } from "./Listener";
+import { Listener } from "@lib/Listener";
 
 import { existsSync, readdirSync, statSync } from "fs";
 

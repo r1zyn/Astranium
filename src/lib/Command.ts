@@ -1,4 +1,4 @@
-import { AstraniumClient } from "./Client";
+import { AstraniumClient } from "@lib/Client";
 import {
 	ApplicationCommandAttachmentOption,
 	ApplicationCommandAutocompleteNumericOption,
@@ -26,9 +26,9 @@ import {
 	SlashCommandSubcommandsOnlyBuilder,
 	SlashCommandUserOption
 } from "discord.js";
-import { SlashCommandInteraction } from "../typings/main";
-import { SubCommand } from "./SubCommand";
-import { Util } from "./Util";
+import { SlashCommandInteraction } from "@typings/main";
+import { SubCommand } from "@lib/SubCommand";
+import { Util } from "@lib/Util";
 
 export class Command extends SlashCommandBuilder {
 	public aliases?: string[];
@@ -44,7 +44,7 @@ export class Command extends SlashCommandBuilder {
 		super();
 
 		this.setAliases(options.aliases);
-		options.args && this.setArgs(options.args);
+		this.setArgs(options.args);
 		this.setCategory(options.category);
 		options.permissions &&
 			options.permissions.user &&
@@ -75,7 +75,7 @@ export class Command extends SlashCommandBuilder {
 		this.setNameLocalizations(
 			options.nameLocalisations ? options.nameLocalisations : {}
 		);
-		options.subcommands && this.setSubCommands(options.subcommands);
+		this.setSubCommands(options.subcommands);
 		this.setUsage(options.usage);
 
 		options.args &&
@@ -228,7 +228,7 @@ export class Command extends SlashCommandBuilder {
 		return this;
 	}
 
-	public setArgs(args: ApplicationCommandOption[]): this {
+	public setArgs(args?: ApplicationCommandOption[]): this {
 		this.args = args;
 		return this;
 	}
@@ -258,7 +258,7 @@ export class Command extends SlashCommandBuilder {
 		return this;
 	}
 
-	public setSubCommands(subcommands: SubCommand[]): this {
+	public setSubCommands(subcommands?: SubCommand[]): this {
 		this.subcommands = subcommands;
 		return this;
 	}

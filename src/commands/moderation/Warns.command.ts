@@ -1,8 +1,8 @@
-import { Command } from "../../lib/Command";
+import { Command } from "@lib/Command";
 
-import AddSubCommand from "../subcommands/moderation/warns/Add.subcommand";
-import ClearCommand from "../subcommands/moderation/warns/Clear.subcommand";
-import RemoveSubCommand from "../subcommands/moderation/warns/Remove.subcommand";
+import AddSubCommand from "@subcommands/moderation/warns/Add.subcommand";
+import ClearCommand from "@subcommands/moderation/warns/Clear.subcommand";
+import RemoveSubCommand from "@subcommands/moderation/warns/Remove.subcommand";
 
 export default class WarnsCommand extends Command {
 	public constructor() {

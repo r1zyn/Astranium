@@ -3,12 +3,12 @@ import {
 	GuildMember,
 	TextChannel
 } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { CaseType } from "../../typings/enums";
-import { Command } from "../../lib/Command";
-import { Constants } from "../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { CaseType } from "@typings/enums";
+import { Command } from "@lib/Command";
+import { Constants } from "@core/constants";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../typings/main";
+import type { SlashCommandInteraction } from "@typings/main";
 
 export default class BanCommand extends Command {
 	public constructor() {
@@ -93,6 +93,8 @@ export default class BanCommand extends Command {
 				message: "Unable to ban the member as they are not bannable."
 			});
 		}
+
+		await client.util.syncMember(member);
 
 		await member
 			.ban({

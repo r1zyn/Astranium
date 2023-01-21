@@ -1,11 +1,11 @@
 import { Client, ClientOptions } from "discord.js";
-import { CommandHandler } from "./CommandHandler";
-import { Constants } from "../constants";
-import { Formatter } from "./Formatter";
-import { ListenerHandler } from "./ListenerHandler";
-import { Logger } from "./Logger";
+import { CommandHandler } from "@lib/CommandHandler";
+import { Constants } from "@core/constants";
+import { Formatter } from "@lib/Formatter";
+import { ListenerHandler } from "@lib/ListenerHandler";
+import { Logger } from "@lib/Logger";
 import type { PrismaClient } from "@prisma/client";
-import { Util } from "./Util";
+import { Util } from "@lib/Util";
 
 import { join } from "path";
 
@@ -19,6 +19,7 @@ export class AstraniumClient<
 	public listenerHandler: ListenerHandler;
 	public logger: Logger;
 	public util: typeof Util;
+	public xpCooldowns: Set<string>;
 
 	public constructor(config: AstraniumConfig) {
 		super(config.clientOptions);
@@ -28,6 +29,7 @@ export class AstraniumClient<
 		this.formatter = Formatter;
 		this.logger = new Logger();
 		this.util = Util;
+		this.xpCooldowns = new Set<string>();
 
 		this.commandHandler = new CommandHandler(this, {
 			directory: join(__dirname, "..", "commands")

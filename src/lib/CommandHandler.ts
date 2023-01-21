@@ -1,7 +1,7 @@
-import type { AstraniumClient } from "./Client";
-import { Category } from "./Category";
+import type { AstraniumClient } from "@lib/Client";
 import { CacheType, Collection, GuildMember, Interaction } from "discord.js";
-import { Command } from "./Command";
+import { Category } from "@lib/Category";
+import { Command } from "@lib/Command";
 import { REST, Routes } from "discord.js";
 
 import { existsSync, readdirSync, statSync } from "fs";
@@ -128,9 +128,6 @@ export class CommandHandler {
 		);
 	}
 
-	/**
-	 * Loads slash commands from `.command.js` files (compiled from original `.command.ts` files).
-	 */
 	public async loadCommands(): Promise<void> {
 		if (!existsSync(this.options.directory)) {
 			return this.client.logger.error(
@@ -301,9 +298,6 @@ export class CommandHandler {
 		}
 	}
 
-	/**
-	 * Registers loaded slash commands to the Discord API.
-	 */
 	public async registerCommands(): Promise<void> {
 		return await this.rest
 			.put(
@@ -327,12 +321,6 @@ export class CommandHandler {
 	}
 }
 
-/**
- * Options for the command handler.
- */
 export interface CommandHandlerOptions {
-	/**
-	 * Directory to load commands from.
-	 */
 	directory: string;
 }

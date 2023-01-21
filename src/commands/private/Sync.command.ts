@@ -1,6 +1,6 @@
-import { Command } from "../../lib/Command";
+import { Command } from "@lib/Command";
 
-import StatsSubCommand from "../subcommands/private/sync/Stats.subcommand";
+import StatsSubCommand from "@subcommands/private/sync/Stats.subcommand";
 
 export default class SyncCommand extends Command {
 	public constructor() {

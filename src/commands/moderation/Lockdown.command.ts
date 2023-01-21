@@ -1,4 +1,4 @@
-import { Command } from "../../lib/Command";
+import { Command } from "@lib/Command";
 
 export default class LockdownCommand extends Command {
 	public constructor() {

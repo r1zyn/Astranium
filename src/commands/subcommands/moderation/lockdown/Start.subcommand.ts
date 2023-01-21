@@ -1,7 +1,7 @@
-import type { AstraniumClient } from "../../../../lib/Client";
+import type { AstraniumClient } from "@lib/Client";
 import type { NonThreadGuildBasedChannel } from "discord.js";
-import type { SlashCommandInteraction } from "../../../../typings/main";
-import { SubCommand } from "../../../../lib/SubCommand";
+import type { SlashCommandInteraction } from "@typings/main";
+import { SubCommand } from "@lib/SubCommand";
 
 export default class StartSubCommand extends SubCommand {
 	public constructor() {

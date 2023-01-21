@@ -6,10 +6,9 @@ import {
 	Message,
 	PartialMessage
 } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { Constants } from "../../constants";
-import { Command } from "../../lib/Command";
-import type { SlashCommandInteraction } from "../../typings/main";
+import type { AstraniumClient } from "@lib/Client";
+import { Command } from "@lib/Command";
+import type { SlashCommandInteraction } from "@typings/main";
 
 export default class ClearCommand extends Command {
 	public constructor() {

@@ -4,11 +4,11 @@ import {
 	InteractionResponse,
 	Message
 } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { Command } from "../../lib/Command";
-import { Constants } from "../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { Command } from "@lib/Command";
+import { Constants } from "@core/constants";
 import type { Guild } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../typings/main";
+import type { SlashCommandInteraction } from "@typings/main";
 
 export default class ConfessCommand extends Command {
 	public constructor() {

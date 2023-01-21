@@ -1,11 +1,11 @@
-import { AstraniumClient } from "../../lib/Client";
-import { Constants } from "../../constants";
+import { AstraniumClient } from "@lib/Client";
+import { Constants } from "@core/constants";
 import type { Event } from "@prisma/client";
 import type {
 	GuildScheduledEvent,
 	WebhookCreateMessageOptions
 } from "discord.js";
-import { Listener } from "../../lib/Listener";
+import { Listener } from "@lib/Listener";
 
 export default class GuildScheduledEventUpdateListener extends Listener {
 	public constructor() {

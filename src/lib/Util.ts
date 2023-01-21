@@ -18,6 +18,7 @@ import {
 	InteractionCollector,
 	InteractionReplyOptions,
 	InteractionResponse,
+	Message,
 	MessageReaction,
 	PermissionsString,
 	User,
@@ -26,25 +27,39 @@ import {
 	Webhook,
 	WebhookCreateMessageOptions
 } from "discord.js";
-import type { AstraniumClient } from "./Client";
-import type { Command } from "./Command";
-import { Constants } from "../constants";
+import type { AstraniumClient } from "@lib/Client";
+import type { Command } from "@lib/Command";
+import { Constants } from "@core/constants";
 import type {
 	ErrorOptions,
 	MemberFetchOptions,
 	SlashCommandInteraction,
 	WarnOptions
-} from "../typings/main";
-import { Formatter } from "./Formatter";
-import type { SubCommand } from "./SubCommand";
+} from "@typings/main";
+import { Formatter } from "@lib/Formatter";
+import type { SubCommand } from "@lib/SubCommand";
 
 import { arch, hostname, platform, release, userInfo } from "os";
+import fetch, { Response } from "node-fetch";
 
 import config from "../../astranium.config";
 
 export class Util {
 	public static category(dirname: string): string {
 		return Formatter.capitalize(dirname.split("\\").pop() as string);
+	}
+
+	public static async chatbot(message: Message): Promise<void> {
+		await fetch(
+			`http://api.brainshop.ai/get?bid=${process.env.BID}&key=${
+				process.env.BRAINSHOP_API_KEY
+			}&uid=${message.author.id}&msg=${encodeURIComponent(
+				message.content
+			)}`
+		)
+			.then((res: Response): Promise<any> => res.json())
+			.then((json: any): Promise<Message> => message.reply(json.cnt))
+			.catch((): null => null);
 	}
 
 	public static createOption<A extends ApplicationCommandOption, O>(

@@ -3,12 +3,12 @@ import {
 	GuildMember,
 	TextChannel
 } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { CaseType } from "../../typings/enums";
-import { Command } from "../../lib/Command";
-import { Constants } from "../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { CaseType } from "@typings/enums";
+import { Command } from "@lib/Command";
+import { Constants } from "@core/constants";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../typings/main";
+import type { SlashCommandInteraction } from "@typings/main";
 
 export default class KickCommand extends Command {
 	public constructor() {
@@ -50,13 +50,6 @@ export default class KickCommand extends Command {
 			interaction.options.getUser("member", true)
 		);
 		const reason: string | null = interaction.options.getString("reason");
-
-		if (
-			!(await client.db.member.findUnique({ where: { id: member.id } }))
-		) {
-			await client.db.member.create({ data: { id: member.id } });
-		}
-
 		const caseNumber: number =
 			(
 				await client.db.moderationCase.findMany({
@@ -93,6 +86,8 @@ export default class KickCommand extends Command {
 				message: "Unable to kick the member as they are not kickable."
 			});
 		}
+
+		await client.util.syncMember(member);
 
 		await member.kick(reason ?? undefined).then(async (): Promise<void> => {
 			if (!member.user.bot) {

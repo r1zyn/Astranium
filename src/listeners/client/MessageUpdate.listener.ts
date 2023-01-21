@@ -1,12 +1,12 @@
-import type { AstraniumClient } from "../../lib/Client";
+import type { AstraniumClient } from "@lib/Client";
 import type {
 	Attachment,
 	EmbedBuilder,
 	Message,
 	TextChannel
 } from "discord.js";
-import { Constants } from "../../constants";
-import { Listener } from "../../lib/Listener";
+import { Constants } from "@core/constants";
+import { Listener } from "@lib/Listener";
 import type { Star } from "@prisma/client";
 
 export default class MessageUpdateListener extends Listener {

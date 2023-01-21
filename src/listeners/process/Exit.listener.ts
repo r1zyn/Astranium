@@ -1,5 +1,5 @@
-import { Constants } from "../../constants";
-import { Listener } from "../../lib/Listener";
+import { Constants } from "@core/constants";
+import { Listener } from "@lib/Listener";
 
 export default class ExitListener extends Listener {
 	public constructor() {

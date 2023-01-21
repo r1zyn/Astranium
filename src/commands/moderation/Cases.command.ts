@@ -1,11 +1,11 @@
 // Note: figure out why src/ doesn't work for paths
 
 import { ApplicationCommandOptionType, GuildMember, User } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { Command } from "../../lib/Command";
-import { Constants } from "../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { Command } from "@lib/Command";
+import { Constants } from "@core/constants";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../typings/main";
+import type { SlashCommandInteraction } from "@typings/main";
 
 export default class CasesCommand extends Command {
 	public constructor() {
@@ -64,6 +64,8 @@ export default class CasesCommand extends Command {
 					"No moderation cases were found for the specified server member."
 			});
 		}
+
+		await client.util.syncMember(member);
 
 		await client.util.paginate<string[]>(cases, 4, interaction, {
 			author: {

@@ -6,12 +6,12 @@ import {
 	Message,
 	TextChannel
 } from "discord.js";
-import type { AstraniumClient } from "../../../../lib/Client";
-import { CaseType } from "../../../../typings/enums";
-import { Constants } from "../../../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { CaseType } from "@typings/enums";
+import { Constants } from "@core/constants";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../../../typings/main";
-import { SubCommand } from "../../../../lib/SubCommand";
+import type { SlashCommandInteraction } from "@typings/main";
+import { SubCommand } from "@lib/SubCommand";
 
 export default class AddSubCommand extends SubCommand {
 	public constructor() {
@@ -47,13 +47,6 @@ export default class AddSubCommand extends SubCommand {
 			interaction.options.getUser("member", true)
 		);
 		const reason: string | null = interaction.options.getString("reason");
-
-		if (
-			!(await client.db.member.findUnique({ where: { id: member.id } }))
-		) {
-			await client.db.member.create({ data: { id: member.id } });
-		}
-
 		const caseNumber: number =
 			(
 				await client.db.moderationCase.findMany({
@@ -73,6 +66,8 @@ export default class AddSubCommand extends SubCommand {
 				message: "The specified member cannot be a bot user."
 			});
 		}
+
+		await client.util.syncMember(member);
 
 		if (
 			interaction.member.roles.highest.comparePositionTo(

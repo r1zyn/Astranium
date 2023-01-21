@@ -5,11 +5,11 @@ import {
 	Message,
 	TextChannel
 } from "discord.js";
-import type { AstraniumClient } from "../../../../lib/Client";
-import { Constants } from "../../../../constants";
+import type { AstraniumClient } from "@lib/Client";
+import { Constants } from "@core/constants";
 import type { ModerationCase } from "@prisma/client";
-import type { SlashCommandInteraction } from "../../../../typings/main";
-import { SubCommand } from "../../../../lib/SubCommand";
+import type { SlashCommandInteraction } from "@typings/main";
+import { SubCommand } from "@lib/SubCommand";
 
 export default class RemoveSubCommand extends SubCommand {
 	public constructor() {

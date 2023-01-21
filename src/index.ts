@@ -1,9 +1,11 @@
-import { AstraniumClient } from "./lib/Client";
-import { Guild } from "discord.js";
-import { Logger } from "./lib/Logger";
+import "module-alias/register";
+
+import { AstraniumClient } from "@lib/Client";
+import type { Guild } from "discord.js";
+import { Logger } from "@lib/Logger";
 import { PrismaClient } from "@prisma/client";
 
-import { initProcess } from "./scripts/initProcess";
+import { initProcess } from "@scripts/initProcess";
 
 import config from "../astranium.config";
 

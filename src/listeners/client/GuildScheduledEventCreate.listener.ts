@@ -3,9 +3,9 @@ import type {
 	GuildScheduledEvent,
 	WebhookCreateMessageOptions
 } from "discord.js";
-import type { AstraniumClient } from "../../lib/Client";
-import { Constants } from "../../constants";
-import { Listener } from "../../lib/Listener";
+import type { AstraniumClient } from "@lib/Client";
+import { Constants } from "@core/constants";
+import { Listener } from "@lib/Listener";
 
 export default class GuildScheduledEventCreateListener extends Listener {
 	public constructor() {
