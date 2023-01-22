@@ -1,4 +1,4 @@
-import { Client, ClientOptions } from "discord.js";
+import { Client, ClientOptions, Collection } from "discord.js";
 import { CommandHandler } from "@lib/CommandHandler";
 import { Constants } from "@core/constants";
 import { Formatter } from "@lib/Formatter";
@@ -19,7 +19,7 @@ export class AstraniumClient<
 	public listenerHandler: ListenerHandler;
 	public logger: Logger;
 	public util: typeof Util;
-	public xpCooldowns: Set<string>;
+	public xpCooldowns: Collection<string, number>;
 
 	public constructor(config: AstraniumConfig) {
 		super(config.clientOptions);
@@ -29,7 +29,7 @@ export class AstraniumClient<
 		this.formatter = Formatter;
 		this.logger = new Logger();
 		this.util = Util;
-		this.xpCooldowns = new Set<string>();
+		this.xpCooldowns = new Collection<string, number>();
 
 		this.commandHandler = new CommandHandler(this, {
 			directory: join(__dirname, "..", "commands")

@@ -37,6 +37,7 @@ import type {
 	WarnOptions
 } from "@typings/main";
 import { Formatter } from "@lib/Formatter";
+import type { Member } from "@prisma/client";
 import type { SubCommand } from "@lib/SubCommand";
 
 import { arch, hostname, platform, release, userInfo } from "os";
@@ -551,6 +552,57 @@ export class Util {
 			interaction.channel.send({
 				embeds: [embed]
 			});
+		}
+	}
+
+	public static async xp(message: Message) {
+		if (!message.member) return;
+
+		const member: Member | null = await global.prisma.member.findUnique({
+			where: { id: message.member.id }
+		});
+		if (!member) return;
+
+		const availableXp: number[] = Array.from(
+			{ length: 10 },
+			(_: unknown, i: number): number => i + 1
+		);
+		const givenXp: number =
+			availableXp[Math.floor(Math.random() * availableXp.length)];
+		const totalXp: number = member.xp + givenXp;
+
+		await global.prisma.member.update({
+			where: {
+				id: message.member.id
+			},
+			data: {
+				xp: totalXp
+			}
+		});
+
+		const newLevel: number = Math.floor(0.1 * Math.sqrt(totalXp));
+		const currentLevel: number = member.level;
+
+		if (newLevel > currentLevel) {
+			await global.prisma.member
+				.update({
+					where: {
+						id: message.member.id
+					},
+					data: {
+						level: newLevel,
+						xp: 0
+					}
+				})
+				.then(async (member: Member): Promise<void> => {
+					await message.channel.send({
+						embeds: [
+							this.embed({
+								description: `${message.member} has reached level **${member.level}**!`
+							})
+						]
+					});
+				});
 		}
 	}
 }
