@@ -25,6 +25,13 @@ export default class BanCommand extends Command {
 					description: "The reason for banning the member.",
 					required: false,
 					type: ApplicationCommandOptionType.String
+				},
+				{
+					name: "clear",
+					description:
+						"Determines whether to delete all messages sent by the member within 14 days.",
+					required: false,
+					type: ApplicationCommandOptionType.Boolean
 				}
 			],
 			category: "Moderation",
@@ -50,6 +57,7 @@ export default class BanCommand extends Command {
 			interaction.options.getUser("member", true)
 		);
 		const reason: string | null = interaction.options.getString("reason");
+		const clear: boolean = interaction.options.getBoolean("clear") || false;
 
 		if (
 			!(await client.db.member.findUnique({ where: { id: member.id } }))
@@ -98,7 +106,7 @@ export default class BanCommand extends Command {
 
 		await member
 			.ban({
-				deleteMessageSeconds: Infinity, // Note: add option for message clearing
+				deleteMessageSeconds: clear ? Infinity : undefined,
 				reason: reason ?? undefined
 			})
 			.then(async (): Promise<void> => {

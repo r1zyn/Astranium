@@ -4,10 +4,12 @@ import {
 	GuildBasedChannel,
 	GuildTextBasedChannel,
 	Message,
-	PartialMessage
+	PartialMessage,
+	TextChannel
 } from "discord.js";
 import type { AstraniumClient } from "@lib/Client";
 import { Command } from "@lib/Command";
+import { Constants } from "@core/constants";
 import type { SlashCommandInteraction } from "@typings/main";
 
 export default class ClearCommand extends Command {
@@ -29,6 +31,12 @@ export default class ClearCommand extends Command {
 					description: "The channel to delete the messages in.",
 					required: false,
 					type: ApplicationCommandOptionType.Channel
+				},
+				{
+					name: "reason",
+					description: "Reason for deleting the messages.",
+					required: false,
+					type: ApplicationCommandOptionType.String
 				}
 			],
 			category: "Moderation",
@@ -50,6 +58,9 @@ export default class ClearCommand extends Command {
 		const channel: GuildBasedChannel =
 			interaction.options.getChannel("channel") ??
 			(interaction.channel as GuildTextBasedChannel);
+		const reason: string =
+			interaction.options.getString("reason") ||
+			"No reason was provided by the moderator.";
 
 		if (!channel.isTextBased()) {
 			return client.util.warn(interaction, {
@@ -57,7 +68,6 @@ export default class ClearCommand extends Command {
 			});
 		}
 
-		// Note: figure out what the filterOld param does
 		await channel
 			.bulkDelete(amount, true)
 			.then(
@@ -70,7 +80,38 @@ export default class ClearCommand extends Command {
 					client.util.success(interaction, {
 						message: `Successfully bulk deleted ${messages.size} messages in ${channel}`
 					});
-					// Note: add logging
+
+					const messageLogs: TextChannel | null =
+						await client.util.fetchChannel<TextChannel>(
+							Constants.Channels["message_logs"],
+							interaction.guild,
+							{
+								cache: true,
+								force: true
+							}
+						);
+
+					if (messageLogs) {
+						await messageLogs.send({
+							embeds: [
+								client.util.embed({
+									author: {
+										name: `Recent bulk delete in #${channel.name} by ${interaction.member.user.tag}`,
+										iconURL:
+											interaction.member.displayAvatarURL()
+									},
+									description: `${
+										interaction.member
+									} recently bulk deleted ${
+										messages.size
+									} messages in ${channel} at ${client.formatter.time(
+										new Date()
+									)}`,
+									fields: [{ name: "Reason", value: reason }]
+								})
+							]
+						});
+					}
 				}
 			);
 	}

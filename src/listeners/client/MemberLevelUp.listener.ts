@@ -1,5 +1,5 @@
 import type { AstraniumClient } from "@lib/Client";
-import { GuildMember, Message } from "discord.js";
+import { GuildMember, GuildTextBasedChannel, Message } from "discord.js";
 import { Listener } from "@lib/Listener";
 
 export default class ErrorListener extends Listener {
@@ -13,7 +13,7 @@ export default class ErrorListener extends Listener {
 
 	public async exec(
 		client: AstraniumClient,
-		message: Message,
+		channel: GuildTextBasedChannel | null,
 		member: GuildMember,
 		level: number
 	): Promise<void> {
@@ -28,13 +28,14 @@ export default class ErrorListener extends Listener {
 				}
 			})
 			.then(async (): Promise<void> => {
-				await message.channel.send({
-					embeds: [
-						client.util.embed({
-							description: `${member} has reached level **${level}**!`
-						})
-					]
-				});
+				channel &&
+					(await channel.send({
+						embeds: [
+							client.util.embed({
+								description: `${member} has reached level **${level}**!`
+							})
+						]
+					}));
 			});
 	}
 }

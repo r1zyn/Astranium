@@ -4,6 +4,7 @@ import type {
 	FetchMemberOptions,
 	FetchMembersOptions,
 	GuildMember,
+	GuildTextBasedChannel,
 	Message,
 	UserResolvable
 } from "discord.js";
@@ -19,7 +20,11 @@ export interface AstraniumEvents {
 		member: GuildMember,
 		setXp: number
 	];
-	memberLevelUp: [message: Message, member: GuildMember, newLevel: number];
+	memberLevelUp: [
+		channel: GuildTextBasedChannel | null,
+		member: GuildMember,
+		newLevel: number
+	];
 	memberLevelAdd: [
 		message: Message,
 		member: GuildMember,

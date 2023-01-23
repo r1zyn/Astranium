@@ -20,7 +20,7 @@ export default class MessageCreateListener extends Listener {
 		if (message.partial) await message.fetch();
 		if (message.author.bot) return;
 
-		if (message.guild) {
+		if (message.guild && message.inGuild()) {
 			if (message.channelId === Constants.Channels["chatbot"]) {
 				await client.util.chatbot(message);
 			}
@@ -37,7 +37,7 @@ export default class MessageCreateListener extends Listener {
 			const member: Member | null = await global.prisma.member.findUnique(
 				{ where }
 			);
-			if (!member) return;
+			if (!member || !message.channel.isTextBased()) return;
 
 			const availableXp: number[] = Array.from(
 				{ length: 10 },
@@ -62,7 +62,7 @@ export default class MessageCreateListener extends Listener {
 			if (pendingLevel > currentLevel) {
 				client.emit(
 					"memberLevelUp",
-					message,
+					message.channel,
 					message.member,
 					pendingLevel
 				);

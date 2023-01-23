@@ -4,25 +4,25 @@ import { SlashCommandInteraction } from "@typings/main";
 import { SubCommand } from "@lib/SubCommand";
 import type { Member, Prisma } from "@prisma/client";
 
-export default class AddSubCommand extends SubCommand {
+export default class SetSubCommand extends SubCommand {
 	public constructor() {
-		super("add", {
+		super("set", {
 			args: [
 				{
 					name: "member",
-					description: "The member to add the xp to.",
+					description: "The member to set the xp for.",
 					required: true,
 					type: ApplicationCommandOptionType.User
 				},
 				{
 					name: "amount",
-					description: "The amount of xp to add to the member.",
+					description: "The amount of xp to set for the member.",
 					required: true,
 					type: ApplicationCommandOptionType.Integer,
 					minValue: 1
 				}
 			],
-			description: "Adds a certain amount of xp to a member."
+			description: "Sets a certain of xp amount for a member."
 		});
 	}
 
@@ -47,25 +47,20 @@ export default class AddSubCommand extends SubCommand {
 
 		await client.util.syncMember(member);
 
-		const { xp }: { xp: number } = (await client.db.member.findUnique({
-			where
-		})) as Member;
-		const pendingXp: number = xp + amount;
-
 		await client.db.member
 			.update({
 				where,
 				data: {
-					xp: pendingXp
+					xp: amount
 				}
 			})
 			.then(({ level: currentLevel }): void => {
 				client.util.success(interaction, {
-					message: `Successfully added **${amount}** xp to ${member}. They now have **${pendingXp}** xp.`
+					message: `Successfully set the amount of xp for ${member} to **${amount}**.`
 				});
 
 				const pendingLevel: number = Math.floor(
-					0.1 * Math.sqrt(pendingXp)
+					0.1 * Math.sqrt(amount)
 				);
 
 				if (pendingLevel > currentLevel) {

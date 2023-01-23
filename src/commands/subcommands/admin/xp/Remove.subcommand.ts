@@ -4,25 +4,25 @@ import { SlashCommandInteraction } from "@typings/main";
 import { SubCommand } from "@lib/SubCommand";
 import type { Member, Prisma } from "@prisma/client";
 
-export default class AddSubCommand extends SubCommand {
+export default class RemoveSubCommand extends SubCommand {
 	public constructor() {
-		super("add", {
+		super("remove", {
 			args: [
 				{
 					name: "member",
-					description: "The member to add the xp to.",
+					description: "The member to remove the xp from.",
 					required: true,
 					type: ApplicationCommandOptionType.User
 				},
 				{
 					name: "amount",
-					description: "The amount of xp to add to the member.",
+					description: "The amount of xp to remove from the member.",
 					required: true,
 					type: ApplicationCommandOptionType.Integer,
 					minValue: 1
 				}
 			],
-			description: "Adds a certain amount of xp to a member."
+			description: "Removes a certain amount of xp from a member."
 		});
 	}
 
@@ -50,7 +50,10 @@ export default class AddSubCommand extends SubCommand {
 		const { xp }: { xp: number } = (await client.db.member.findUnique({
 			where
 		})) as Member;
-		const pendingXp: number = xp + amount;
+		let pendingXp: number = xp - amount;
+
+		if (pendingXp < 0) pendingXp = 0;
+		// Note: change this so levels also derank
 
 		await client.db.member
 			.update({
@@ -59,23 +62,10 @@ export default class AddSubCommand extends SubCommand {
 					xp: pendingXp
 				}
 			})
-			.then(({ level: currentLevel }): void => {
+			.then((): void =>
 				client.util.success(interaction, {
-					message: `Successfully added **${amount}** xp to ${member}. They now have **${pendingXp}** xp.`
-				});
-
-				const pendingLevel: number = Math.floor(
-					0.1 * Math.sqrt(pendingXp)
-				);
-
-				if (pendingLevel > currentLevel) {
-					client.emit(
-						"memberLevelUp",
-						interaction.channel,
-						member,
-						pendingLevel
-					);
-				}
-			});
+					message: `Successfully removed **${amount}** xp from ${member}. They now have **${pendingXp}** xp.`
+				})
+			);
 	}
 }
