@@ -41,7 +41,8 @@
 			]
 		}, // A series of entries which re-map imports to lookup locations relative to the baseUrl.
 		"typeRoots": [ // Specify multiple folders that act like ./node_modules/@types.
-			"node_modules/@types"
+			"node_modules/@types",
+			"typings"
 		],
 		"allowUmdGlobalAccess": true, // Allow accessing UMD globals from modules.
 		"resolveJsonModule": true, // Enable importing .json files
@@ -69,7 +70,8 @@
 		"skipLibCheck": true // Skip type checking all .d.ts files.
 	},
 	"include": [
-		"src"
+		"src",
+		"typings/discord.js/index.d.ts"
 	],
 	"exclude": [
 		"build",

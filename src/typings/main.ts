@@ -3,8 +3,30 @@ import type {
 	ChatInputCommandInteraction,
 	FetchMemberOptions,
 	FetchMembersOptions,
+	GuildMember,
+	Message,
 	UserResolvable
 } from "discord.js";
+
+export interface AstraniumEvents {
+	memberXpAdd: [
+		interaction: SlashCommandInteraction,
+		member: GuildMember,
+		addedXp: number
+	];
+	memberXpSet: [
+		interaction: SlashCommandInteraction,
+		member: GuildMember,
+		setXp: number
+	];
+	memberLevelUp: [message: Message, member: GuildMember, newLevel: number];
+	memberLevelAdd: [
+		message: Message,
+		member: GuildMember,
+		addedLevels: number
+	];
+	memberLevelSet: [message: Message, member: GuildMember, setLevel: number];
+}
 
 export interface ErrorOptions {
 	emitter: string;

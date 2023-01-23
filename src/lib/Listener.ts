@@ -1,3 +1,4 @@
+import type { AstraniumEvents } from "@typings/main";
 import type { ClientEvents } from "discord.js";
 
 export class Listener {
@@ -43,7 +44,10 @@ export class Listener {
 }
 
 export type ListenerEmitter = "client" | "process";
-export type ListenerName = keyof ClientEvents | ProcessEvents;
+export type ListenerName =
+	| keyof ClientEvents
+	| keyof AstraniumEvents
+	| ProcessEvents;
 
 export interface ListenerOptions {
 	category: string;
