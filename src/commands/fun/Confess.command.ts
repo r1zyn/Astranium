@@ -31,8 +31,8 @@ export default class ConfessCommand extends Command {
 			category: "Fun",
 			description: "Sends a confession to the confession channel.",
 			examples: [
-				"confess message:A confession",
-				"confess message:Another confession anonymous:false"
+				"confess A confession",
+				"confess Another confession false"
 			],
 			usage: "confess <message> [anonymous]"
 		});
@@ -93,7 +93,7 @@ export default class ConfessCommand extends Command {
 										: `Confession by ${interaction.user.tag} (#${g.confessions})`,
 									description: `"${message}"`,
 									footer: {
-										text: "Run /confess to submit a confession. If you have any issues with a confession, create a post in the forums." // Note: create report command for this
+										text: "Run /confess to submit a confession (preferably in a bot command channel)."
 									},
 									timestamp: Date.now()
 								})

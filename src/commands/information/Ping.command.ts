@@ -7,7 +7,7 @@ import type { SlashCommandInteraction } from "@typings/main";
 export default class PingCommand extends Command {
 	public constructor() {
 		super("ping", {
-			category: "information",
+			category: "Information",
 			description:
 				"Returns your round-trip time, websocket ping and client uptime.",
 			examples: ["ping"],

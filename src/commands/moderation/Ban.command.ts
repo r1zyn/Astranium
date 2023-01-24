@@ -40,7 +40,7 @@ export default class BanCommand extends Command {
 			permissions: {
 				user: ["BanMembers"]
 			},
-			usage: "ban <member> [reason]"
+			usage: "ban <member> [reason] [clear]"
 		});
 	}
 

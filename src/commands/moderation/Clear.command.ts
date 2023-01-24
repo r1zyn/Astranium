@@ -46,7 +46,7 @@ export default class ClearCommand extends Command {
 			permissions: {
 				user: ["ManageMessages"]
 			},
-			usage: "clear <amount> [channel]"
+			usage: "clear <amount> [channel] [reason]"
 		});
 	}
 

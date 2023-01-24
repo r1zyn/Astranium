@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import type { AstraniumClient } from "@lib/Client";
 import { Constants } from "@core/constants";
-import type { ModerationCase } from "@prisma/client";
+import type { Report } from "@prisma/client";
 import type { SlashCommandInteraction } from "@typings/main";
 import { SubCommand } from "@lib/SubCommand";
 
@@ -17,7 +17,7 @@ export default class RemoveSubCommand extends SubCommand {
 			args: [
 				{
 					name: "id",
-					description: "The id of the warn case.",
+					description: "The id of the report.",
 					required: true,
 					type: ApplicationCommandOptionType.String,
 					minLength: 18,
@@ -25,12 +25,12 @@ export default class RemoveSubCommand extends SubCommand {
 				},
 				{
 					name: "reason",
-					description: "The reason for removing the warn.",
+					description: "The reason for removing the report.",
 					required: false,
 					type: ApplicationCommandOptionType.String
 				}
 			],
-			description: "Removes a server member's warn.",
+			description: "Removes a server member's report.",
 			examples: [
 				"remove q35sZs0yB1uNut5SXL",
 				"remove q35sZs0yB1uNut5SXL Unjustified"
@@ -43,46 +43,44 @@ export default class RemoveSubCommand extends SubCommand {
 		client: AstraniumClient,
 		interaction: SlashCommandInteraction<"cached">
 	): Promise<void | Message<boolean>> {
-		const moderationLogs: TextChannel | null =
+		const reports: TextChannel | null =
 			await client.util.fetchChannel<TextChannel>(
-				Constants.Channels["moderation_logs"],
+				Constants.Channels["reports"],
 				interaction.guild
 			);
 		const caseId: string = interaction.options.getString("id", true);
 		const reason: string | null = interaction.options.getString("reason");
-		const warnCase: ModerationCase | null =
-			await client.db.moderationCase.findUnique({ where: { caseId } });
+		const report: Report | null = await client.db.report.findUnique({
+			where: { caseId }
+		});
 
-		if (!warnCase) {
-			return client.util.warn(interaction, {
-				message: "Unable to find a warn case with a matching case ID."
-			});
-		}
-
-		const member: GuildMember = await interaction.guild.members.fetch(
-			warnCase.memberId
-		);
-
-		if (
-			interaction.member.roles.highest.comparePositionTo(
-				member.roles.highest
-			) <= 0
-		) {
+		if (!report) {
 			return client.util.warn(interaction, {
 				message:
-					"The provided member has either higher or similiar roles."
+					"Unable to find a member report with a matching case ID."
 			});
 		}
 
-		await client.db.moderationCase
+		const member: GuildMember = await client.util.fetchMember(
+			interaction.guild,
+			report.memberId
+		);
+		const reporter: GuildMember = await client.util.fetchMember(
+			interaction.guild,
+			report.reporterId
+		);
+
+		await client.db.report
 			.delete({ where: { caseId } })
-			.then(async (moderationCase: ModerationCase): Promise<void> => {
+			.then(async (report: Report): Promise<void> => {
 				const loggingEmbed: EmbedBuilder = client.util.embed({
 					author: {
-						name: `${member.user.tag} - Server Warn Removal (Case ID ${caseId})`,
+						name: `${member.user.tag} - Server Case Removal (Case ID ${report.caseId})`,
 						iconURL: member.user.displayAvatarURL()
 					},
-					description: `${member}'s warn **${caseId}** was removed at ${client.formatter.time(
+					description: `Report **${
+						report.caseId
+					}** for ${member} (submitted by ${reporter}) was removed at ${client.formatter.time(
 						new Date()
 					)}.`,
 					fields: [
@@ -101,14 +99,14 @@ export default class RemoveSubCommand extends SubCommand {
 					]
 				});
 
-				if (moderationLogs) {
-					await moderationLogs.send({
+				if (reports) {
+					await reports.send({
 						embeds: [loggingEmbed]
 					});
 				}
 
 				client.util.success(interaction, {
-					message: `Successfully removed warn from ${member} (**ID:** ${caseId})`
+					message: `Successfully removed report for ${member} (**ID:** ${caseId})`
 				});
 			});
 	}

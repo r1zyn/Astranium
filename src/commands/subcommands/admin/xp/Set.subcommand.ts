@@ -22,7 +22,9 @@ export default class SetSubCommand extends SubCommand {
 					minValue: 1
 				}
 			],
-			description: "Sets a certain of xp amount for a member."
+			description: "Sets a certain of xp amount for a member.",
+			examples: ["set @tncz 500"],
+			usage: "set <member> <amount>"
 		});
 	}
 

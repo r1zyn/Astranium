@@ -9,13 +9,6 @@ export default class WarnsCommand extends Command {
 		super("warns", {
 			category: "Moderation",
 			description: "Either add, remove or clears all warns for a member.",
-			examples: [
-				"warn add @tncz",
-				"warn add @tncz Being toxic",
-				"warn remove kzyNZqzBMrQt22SjCe",
-				"warn remove kzyNZqzBMrQt22SjCe Unjustified",
-				"warn view kzyNZqzBMrQt22SjCe"
-			], // Note: create usage and examples for subcommands
 			permissions: {
 				user: ["ModerateMembers"]
 			},
@@ -24,7 +17,7 @@ export default class WarnsCommand extends Command {
 				new ClearCommand(),
 				new RemoveSubCommand()
 			],
-			usage: "warn add | remove | view"
+			usage: "warns add | remove | view"
 		});
 	}
 }

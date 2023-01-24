@@ -29,6 +29,8 @@ import { Util } from "@lib/Util";
 
 export class SubCommand extends SlashCommandSubcommandBuilder {
 	public args?: ApplicationCommandOption[];
+	public examples: string[];
+	public usage: string;
 
 	public constructor(name: string, options: SubCommandOptions) {
 		super();
@@ -189,11 +191,23 @@ export class SubCommand extends SlashCommandSubcommandBuilder {
 		this.args = args;
 		return this;
 	}
+
+	public setExamples(examples: string[]): this {
+		this.examples = examples;
+		return this;
+	}
+
+	public setUsage(usage: string): this {
+		this.usage = usage;
+		return this;
+	}
 }
 
 export interface SubCommandOptions {
 	args?: ApplicationCommandOption[];
 	description?: string;
 	descriptionLocalisations?: Localizations;
+	examples: string[];
 	nameLocalisations?: Localizations;
+	usage: string;
 }

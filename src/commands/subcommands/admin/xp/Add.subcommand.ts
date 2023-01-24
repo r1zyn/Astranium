@@ -22,7 +22,9 @@ export default class AddSubCommand extends SubCommand {
 					minValue: 1
 				}
 			],
-			description: "Adds a certain amount of xp to a member."
+			description: "Adds a certain amount of xp to a member.",
+			examples: ["add @tncz 5"],
+			usage: "add <member> <amount>"
 		});
 	}
 

@@ -6,7 +6,9 @@ import { SubCommand } from "@lib/SubCommand";
 export default class StartSubCommand extends SubCommand {
 	public constructor() {
 		super("start", {
-			description: "Initiates a server lockdown."
+			description: "Initiates a server lockdown.",
+			examples: ["start"],
+			usage: "start"
 		});
 	}
 

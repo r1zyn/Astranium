@@ -7,7 +7,6 @@ export default class SyncCommand extends Command {
 		super("sync", {
 			category: "Admin",
 			description: "Synchronises server statistics and database members.",
-			examples: ["sync stats"],
 			permissions: {
 				user: ["Administrator"]
 			},

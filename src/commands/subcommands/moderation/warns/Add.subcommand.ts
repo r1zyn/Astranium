@@ -30,7 +30,9 @@ export default class AddSubCommand extends SubCommand {
 					type: ApplicationCommandOptionType.String
 				}
 			],
-			description: "Warns a server member."
+			description: "Warns a server member.",
+			examples: ["add @tncz", "add @tncz Being toxic"],
+			usage: "add <member> [reason]"
 		});
 	}
 

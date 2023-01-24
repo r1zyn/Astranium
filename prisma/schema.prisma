@@ -38,6 +38,14 @@ model ModerationCase {
     type        String
 }
 
+model Report {
+    caseId     String   @id @unique
+    memberId   String
+    reporterId String
+    reason     String
+    date       DateTime @default(now())
+}
+
 model Star {
     starId    String @id @unique
     messageId String @unique

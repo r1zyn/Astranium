@@ -22,7 +22,9 @@ export default class RemoveSubCommand extends SubCommand {
 					minValue: 1
 				}
 			],
-			description: "Removes a certain amount of xp from a member."
+			description: "Removes a certain amount of xp from a member.",
+			examples: ["remove 10"],
+			usage: "remove <member> <amount>"
 		});
 	}
 

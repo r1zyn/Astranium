@@ -103,9 +103,12 @@ export class Util {
 				name: "Whoops! Looks like an internal error occurred.",
 				iconURL: interaction.client.user.displayAvatarURL()
 			},
-			description: `Hey there, ${interaction.user}. Looks like an internal error occurred while processing your command. Please try again later, and if the problem persists, join the and report the issue.`
+			description: `Hey there, ${
+				interaction.user
+			}. Looks like an internal error occurred while processing your command. Please try again later, and if the problem persists, feel free to report this in ${Formatter.channelMention(
+				Constants.Channels["forums"]
+			)}.`
 		});
-		// Note: change this later
 
 		if (method === "reply" || !interaction.channel) {
 			interaction.reply({

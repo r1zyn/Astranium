@@ -5,7 +5,9 @@ import { SubCommand } from "@lib/SubCommand";
 export default class StatsSubCommand extends SubCommand {
 	public constructor() {
 		super("stats", {
-			description: "Syncs server statistics and database members."
+			description: "Syncs server statistics and database members.",
+			examples: ["stats"],
+			usage: "stats"
 		});
 	}
 

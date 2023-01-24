@@ -1,15 +1,16 @@
 import { Command } from "@lib/Command";
 
+import StartSubCommand from "../subcommands/moderation/lockdown/Start.subcommand";
+
 export default class LockdownCommand extends Command {
 	public constructor() {
 		super("lockdown", {
 			category: "Moderation",
 			description: "Lockdowns all the channels in the server.",
-			examples: ["lockdown start", "lockdown end"],
 			permissions: {
 				user: ["ManageChannels"]
 			},
-			subcommands: [],
+			subcommands: [new StartSubCommand()],
 			usage: "lockdown start | end"
 		});
 	}

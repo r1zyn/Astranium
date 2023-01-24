@@ -29,7 +29,9 @@ export default class ClearSubCommand extends SubCommand {
 					type: ApplicationCommandOptionType.String
 				}
 			],
-			description: "Clears all warns of a member."
+			description: "Clears all warns of a member.",
+			examples: ["clear @tncz", "clear @tncz Unjustified"],
+			usage: "clear <member> [reason]"
 		});
 	}
 

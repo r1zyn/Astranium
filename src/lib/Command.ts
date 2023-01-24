@@ -34,7 +34,7 @@ export class Command extends SlashCommandBuilder {
 	public aliases?: string[];
 	public args?: ApplicationCommandOption[];
 	public category: string;
-	public examples: string[];
+	public examples?: string[];
 	public permissions?: CommandPermissions;
 	public ownerOnly: boolean;
 	public subcommands?: SubCommand[];
@@ -238,7 +238,7 @@ export class Command extends SlashCommandBuilder {
 		return this;
 	}
 
-	public setExamples(examples: string[]): this {
+	public setExamples(examples?: string[]): this {
 		this.examples = examples;
 		return this;
 	}
@@ -276,7 +276,7 @@ export interface CommandOptions {
 	category: string;
 	description?: string;
 	descriptionLocalisations?: Localizations;
-	examples: string[];
+	examples?: string[];
 	nameLocalisations?: Localizations;
 	ownerOnly?: boolean;
 	permissions?: CommandPermissions;
