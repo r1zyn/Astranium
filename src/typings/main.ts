@@ -6,6 +6,8 @@ import type {
 	GuildMember,
 	GuildTextBasedChannel,
 	Message,
+	TextBasedChannel,
+	User,
 	UserResolvable
 } from "discord.js";
 
@@ -33,6 +35,30 @@ export interface AstraniumEvents {
 	memberLevelSet: [message: Message, member: GuildMember, setLevel: number];
 }
 
+export interface EditSnipe {
+	content: EditSnipeContent;
+	author: User;
+	channel: TextBasedChannel;
+	image: EditSnipeImage;
+	time: EditSnipeTime;
+	url: string | null;
+}
+
+export interface EditSnipeContent {
+	before: string;
+	after: string;
+}
+
+export interface EditSnipeImage {
+	before: string | null;
+	after: string | null;
+}
+
+export interface EditSnipeTime {
+	before: string;
+	after: string;
+}
+
 export interface ErrorOptions {
 	emitter: string;
 	ephemeral?: boolean;
@@ -40,6 +66,8 @@ export interface ErrorOptions {
 	kill?: boolean;
 	method?: "reply" | "send";
 }
+
+export type GenericFunction<T = any> = (...args: any[]) => Promise<T>;
 
 export type MemberFetchOptions =
 	| UserResolvable
@@ -56,6 +84,14 @@ export interface MessageSelectMenuOption {
 
 export type SlashCommandInteraction<T extends CacheType = CacheType> =
 	ChatInputCommandInteraction<T>;
+
+export interface Snipe {
+	content: string;
+	author: User;
+	channel: TextBasedChannel;
+	image: string | null;
+	time: string;
+}
 
 export interface WarnOptions {
 	ephemeral?: boolean;

@@ -2,6 +2,7 @@ import type { AstraniumClient } from "@lib/Client";
 import { Category } from "@lib/Category";
 import { Collection } from "discord.js";
 import type { EventEmitter } from "node:events";
+import type { GenericFunction } from "@typings/main";
 import { Listener } from "@lib/Listener";
 
 import { existsSync, readdirSync, statSync } from "fs";
@@ -98,11 +99,15 @@ export class ListenerHandler {
 				).filter((file: string): boolean =>
 					file.endsWith(".listener.js")
 				)) {
-					const Instance: new () => Listener = (
-						(await import(
-							`${this.options.directory}/${subdirectory}/${file}`
-						)) as { default: new () => Listener }
-					).default;
+					const exports: {
+						[key: string]: any;
+						default: new () => Listener;
+					} = await import(
+						`${this.options.directory}/${subdirectory}/${file}`
+					);
+
+					const Instance: new () => Listener = exports.default;
+
 					if (!Instance) {
 						return this.client.logger.error(
 							`Default export of ${this.options.directory}/${subdirectory}/${file} is not instance of Listener class`,
@@ -123,6 +128,11 @@ export class ListenerHandler {
 
 					const listener: Listener = new Instance();
 					listener.exec = Instance.prototype.exec;
+
+					// const handlers: GenericFunction<any>[] = Object
+					// 	.keys(exports)
+					// 	.filter((key: string): boolean => typeof exports[key] === "function" && !(exports[key] instanceof Instance))
+					// 	.map((key: string): GenericFunction<any> => exports[key]);
 
 					if (!this.categories.get(listener.category.toLowerCase())) {
 						this.categories.set(
@@ -153,11 +163,13 @@ export class ListenerHandler {
 				.filter((file: string): boolean =>
 					file.endsWith(".listener.js")
 				)) {
-				const Instance: new () => Listener = (
-					(await import(`${this.options.directory}/${file}`)) as {
-						default: new () => Listener;
-					}
-				).default;
+				const exports: {
+					[key: string]: any;
+					default: new () => Listener;
+				} = await import(`${this.options.directory}/${file}`);
+
+				const Instance: new () => Listener = exports.default;
+
 				if (!Instance) {
 					return this.client.logger.error(
 						`Default export of ${this.options.directory}/${file} is not instance of Listener class`,
@@ -178,6 +190,11 @@ export class ListenerHandler {
 
 				const listener: Listener = new Instance();
 				listener.exec = Instance.prototype.exec;
+
+				// const handlers: GenericFunction<any>[] = Object
+				// 	.keys(exports)
+				// 	.filter((key: string): boolean => typeof exports[key] === "function" && !(exports[key] instanceof Instance))
+				// 	.map((key: string): GenericFunction<any> => exports[key]);
 
 				if (!this.categories.get(listener.category.toLowerCase())) {
 					this.categories.set(

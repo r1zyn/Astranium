@@ -21,7 +21,7 @@ export default class PingCommand extends Command {
 	public async exec(
 		client: AstraniumClient<true>,
 		interaction: SlashCommandInteraction<"cached">
-	): Promise<void | Message<boolean>> {
+	): Promise<void> {
 		const message: Message = await interaction.reply({
 			embeds: [
 				client.util.embed({
@@ -38,7 +38,7 @@ export default class PingCommand extends Command {
 
 		// Note: custom ms/moment?
 
-		return interaction.editReply({
+		await interaction.editReply({
 			embeds: [
 				client.util.embed({
 					author: {

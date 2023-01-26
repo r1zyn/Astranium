@@ -59,6 +59,12 @@ export default class ReportCommand extends Command {
 				}
 			);
 
+		if (member.user.bot) {
+			return client.util.warn(interaction, {
+				message: "The specified member cannot be a bot user."
+			});
+		}
+
 		if (reports) {
 			await client.db.report
 				.create({

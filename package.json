@@ -34,10 +34,13 @@
         "dotenv": "^16.0.3",
         "node-fetch": "2",
         "prisma": "^4.9.0",
+        "timestring": "^6.0.0",
         "tspath": "^2.6.8"
     },
     "devDependencies": {
+        "@types/module-alias": "^2.0.1",
         "@types/node-fetch": "^2.6.2",
+        "@types/timestring": "^6.0.2",
         "@typescript-eslint/eslint-plugin": "^5.40.1",
         "@typescript-eslint/parser": "^5.40.1",
         "dotenv-cli": "^6.0.0",

@@ -158,11 +158,14 @@ export class CommandHandler {
 				).filter((file: string): boolean =>
 					file.endsWith(".command.js")
 				)) {
-					const Instance: new () => Command = (
-						(await import(
-							`${this.options.directory}/${subdirectory}/${file}`
-						)) as { default: new () => Command }
-					).default;
+					const exports: {
+						[key: string]: any;
+						default: new () => Command;
+					} = await import(
+						`${this.options.directory}/${subdirectory}/${file}`
+					);
+
+					const Instance: new () => Command = exports.default;
 					if (!Instance) {
 						return this.client.logger.error(
 							`Default export of ${this.options.directory}/${subdirectory}/${file} is not instance of Command class`,
@@ -221,11 +224,12 @@ export class CommandHandler {
 				.filter((file: string): boolean =>
 					file.endsWith(".command.js")
 				)) {
-				const Instance: new () => Command = (
-					(await import(`${this.options.directory}/${file}`)) as {
-						default: new () => Command;
-					}
-				).default;
+				const exports: {
+					[key: string]: any;
+					default: new () => Command;
+				} = await import(`${this.options.directory}/${file}`);
+
+				const Instance: new () => Command = exports.default;
 				if (!Instance) {
 					return this.client.logger.error(
 						`Default export of ${this.options.directory}/${file} is not instance of Command class`,

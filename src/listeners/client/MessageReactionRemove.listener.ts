@@ -16,54 +16,56 @@ export default class MessageReactionRemoveListener extends Listener {
 	public async exec(
 		client: AstraniumClient,
 		reaction: MessageReaction,
-		_user: User
-	): Promise<void> {
+		user: User
+	): Promise<any> {
 		if (reaction.partial) await reaction.fetch();
 
-		if (reaction.message.guild && reaction.message.author) {
-			if (
-				reaction.message.channel.id === Constants.Channels["starboard"]
-			) {
-				return;
-			}
+		await handleStarboard(client, reaction);
+	}
+}
 
-			if (reaction.emoji.name === Constants.Emojis["star"]) {
-				const starboard: TextChannel | null =
-					await client.util.fetchChannel(
-						Constants.Channels["starboard"],
-						reaction.message.guild
-					);
+export async function handleStarboard(
+	client: AstraniumClient,
+	reaction: MessageReaction
+): Promise<void> {
+	if (reaction.message.guild && reaction.message.author) {
+		if (reaction.message.channel.id === Constants.Channels["starboard"]) {
+			return;
+		}
 
-				const star: Star | null = await client.db.star.findUnique({
-					where: { messageId: reaction.message.id }
-				});
+		if (reaction.emoji.name === Constants.Emojis["star"]) {
+			const starboard: TextChannel =
+				await client.util.fetchChannel<TextChannel>(
+					Constants.Channels["starboard"],
+					reaction.message.guild
+				);
 
-				await reaction.message.fetch();
-				const starReactions: number =
-					reaction.message.reactions.cache.get(
-						Constants.Emojis["star"]
-					)?.count || 0;
+			const star: Star | null = await client.db.star.findUnique({
+				where: { messageId: reaction.message.id }
+			});
 
-				if (!starboard) return;
+			await reaction.message.fetch();
+			const starReactions: number =
+				reaction.message.reactions.cache.get(Constants.Emojis["star"])
+					?.count || 0;
 
-				if (star) {
-					const starredMessage: Message<true> =
-						await starboard.messages.fetch(star.starId);
+			if (star) {
+				const starredMessage: Message<true> =
+					await starboard.messages.fetch(star.starId);
 
-					if (starReactions < 3) {
-						await client.db.star
-							.delete({
-								where: { messageId: reaction.message.id }
-							})
-							.then(
-								(): Promise<Message<true>> =>
-									starredMessage.delete()
-							);
-					} else if (starReactions >= 3) {
-						starredMessage.edit({
-							content: `:star: **${starReactions} |** ${reaction.message.channel}`
-						});
-					}
+				if (starReactions < 3) {
+					await client.db.star
+						.delete({
+							where: { messageId: reaction.message.id }
+						})
+						.then(
+							(): Promise<Message<true>> =>
+								starredMessage.delete()
+						);
+				} else if (starReactions >= 3) {
+					starredMessage.edit({
+						content: `:star: **${starReactions} |** ${reaction.message.channel}`
+					});
 				}
 			}
 		}

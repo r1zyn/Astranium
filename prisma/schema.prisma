@@ -35,6 +35,7 @@ model ModerationCase {
     moderatorId String
     reason      String   @default("No reason was provided by the moderator.")
     date        DateTime @default(now())
+	expires		DateTime?
     type        String
 }
 

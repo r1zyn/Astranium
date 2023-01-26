@@ -20,6 +20,11 @@ export class Listener {
 			`${this.constructor.name.replace("Listener", "")}Listener`,
 			true
 		);
+
+		// await Util.handleListenerFunctions<[...typeof this.exec.arguments], void>(
+		// 	this.handlers,
+		// 	[...args]
+		// )
 	}
 
 	public setCategory(category: string): this {

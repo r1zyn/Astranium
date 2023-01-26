@@ -32,6 +32,7 @@ import type { Command } from "@lib/Command";
 import { Constants } from "@core/constants";
 import type {
 	ErrorOptions,
+	GenericFunction,
 	MemberFetchOptions,
 	SlashCommandInteraction,
 	WarnOptions
@@ -192,15 +193,12 @@ export class Util {
 		return "";
 	}
 
-	public static async fetchChannel<ChannelType = GuildBasedChannel>(
+	public static async fetchChannel<T extends GuildBasedChannel>(
 		channelId: string,
 		guild: Guild,
 		options?: BaseFetchOptions
-	): Promise<ChannelType | null> {
-		return (await guild.channels.fetch(
-			channelId,
-			options
-		)) as ChannelType | null;
+	): Promise<T> {
+		return (await guild.channels.fetch(channelId, options)) as T;
 	}
 
 	public static async fetchMember(
@@ -222,6 +220,15 @@ export class Util {
 		}
 
 		return result.join("");
+	}
+
+	public static async handleListenerFunctions<A extends [...any[]], R>(
+		funcs: GenericFunction<R>[],
+		args: A
+	): Promise<void> {
+		funcs.forEach(
+			async (func: GenericFunction<R>): Promise<R> => await func(...args)
+		);
 	}
 
 	public static async handleSubCommands(

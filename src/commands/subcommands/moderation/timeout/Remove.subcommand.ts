@@ -13,55 +13,43 @@ import type { ModerationCase } from "@prisma/client";
 import type { SlashCommandInteraction } from "@typings/main";
 import { SubCommand } from "@lib/SubCommand";
 
-export default class AddSubCommand extends SubCommand {
+export default class RemoveSubCommand extends SubCommand {
 	public constructor() {
-		super("add", {
+		super("remove", {
 			args: [
 				{
 					name: "member",
-					description: "The member to warn.",
+					description: "The member to remove the timeout from.",
 					required: true,
 					type: ApplicationCommandOptionType.User
 				},
 				{
 					name: "reason",
-					description: "The reason for warning the member.",
+					description: "The reason for removing the timeout.",
 					required: false,
 					type: ApplicationCommandOptionType.String
 				}
 			],
-			description: "Warns a server member.",
-			examples: ["add @tncz", "add @tncz Being toxic"],
-			usage: "add <member> [reason]"
+			description: "Removes a member's timeout.",
+			examples: ["remove @tncz", "remove @tncz Unjustified"],
+			usage: "remove <member> [reason]"
 		});
 	}
 
 	public async exec(
 		client: AstraniumClient,
 		interaction: SlashCommandInteraction<"cached">
-	): Promise<void | Message<boolean>> {
+	): Promise<void> {
 		const moderationLogs: TextChannel | null =
 			await client.util.fetchChannel<TextChannel>(
 				Constants.Channels["moderation_logs"],
 				interaction.guild
 			);
-		const member: GuildMember = await interaction.guild.members.fetch(
+		const member: GuildMember = await client.util.fetchMember(
+			interaction.guild,
 			interaction.options.getUser("member", true)
 		);
 		const reason: string | null = interaction.options.getString("reason");
-		const caseNumber: number =
-			(
-				await client.db.moderationCase.findMany({
-					where: { memberId: member.id }
-				})
-			).length + 1 ?? 1;
-		const warnNumber: number =
-			(
-				await client.db.moderationCase.findMany({
-					where: { memberId: member.id, type: CaseType.WARN }
-				})
-			).length + 1 ?? 1;
-		let caseId: string = client.util.generateKey(18);
 
 		if (member.user.bot) {
 			return client.util.warn(interaction, {
@@ -69,50 +57,47 @@ export default class AddSubCommand extends SubCommand {
 			});
 		}
 
-		await client.util.syncMember(member);
-
-		if (
-			interaction.member.roles.highest.comparePositionTo(
-				member.roles.highest
-			) <= 0
-		) {
+		if (!member.isCommunicationDisabled()) {
 			return client.util.warn(interaction, {
-				message:
-					"You cannot warn the member as they have either higher or similiar roles."
+				message: "The specified member is not currently in timeout."
 			});
 		}
 
-		while (
-			await client.db.moderationCase.findUnique({ where: { caseId } })
-		) {
-			caseId = client.util.generateKey(18);
-		}
+		await client.util.syncMember(member);
 
-		await client.db.moderationCase
-			.create({
-				data: {
-					caseId,
-					memberId: member.id,
-					moderatorId: interaction.member.id,
-					reason: reason ?? undefined,
-					type: CaseType.WARN
-				}
-			})
-			.then(async (moderationCase: ModerationCase): Promise<void> => {
+		await member
+			.timeout(null, reason ?? undefined)
+			.then(async (): Promise<void> => {
+				const moderationCase: ModerationCase = (
+					await client.db.moderationCase.findMany({
+						where: {
+							memberId: member.id,
+							type: CaseType.TIMEOUT
+						}
+					})
+				)[0];
+
+				const endsAt: string = client.formatter.time(
+					moderationCase.expires as Date,
+					"R"
+				);
+				const expire: string =
+					new Date() > (moderationCase.expires as Date)
+						? "expired"
+						: "expires";
+
 				const memberEmbed: EmbedBuilder = client.util.embed({
 					author: {
-						name: `${interaction.guild.name} - Server Warn (Case ID ${caseId})`,
-						iconURL: interaction.guild.iconURL() ?? undefined
+						name: `${member.user.tag} - Server Timeout Removal (Case ID ${moderationCase.caseId})`,
+						iconURL: member.user.displayAvatarURL()
 					},
-					description: `You were warned in ${
-						interaction.guild.name
+					description: `Your timeout **${
+						moderationCase.caseId
+					}** was removed by ${
+						interaction.member
 					} at ${client.formatter.time(
-						moderationCase.date
-					)}. This is your **${caseNumber}${client.formatter.suffix(
-						caseNumber
-					)}** moderation case and **${warnNumber}${client.formatter.suffix(
-						warnNumber
-					)}** server warn.`,
+						new Date()
+					)}. The timeout ${expire} ${endsAt}`,
 					fields: [
 						{
 							name: "Responsible Moderator",
@@ -120,7 +105,7 @@ export default class AddSubCommand extends SubCommand {
 							inline: true
 						},
 						{
-							name: "Warn Reason",
+							name: "Timeout Removal Reason",
 							value: moderationCase.reason,
 							inline: true
 						}
@@ -129,16 +114,16 @@ export default class AddSubCommand extends SubCommand {
 
 				const loggingEmbed: EmbedBuilder = client.util.embed({
 					author: {
-						name: `${member.user.tag} - Server Warn (Case ID ${caseId})`,
+						name: `${member.user.tag} - Server Timeout Removal (Case ID ${moderationCase.caseId})`,
 						iconURL: member.user.displayAvatarURL()
 					},
-					description: `${member} was warned at ${client.formatter.time(
-						moderationCase.date
-					)}. This is their **${caseNumber}${client.formatter.suffix(
-						caseNumber
-					)}** moderation case and **${warnNumber}${client.formatter.suffix(
-						warnNumber
-					)}** server warn.`,
+					description: `${member}'s timeout **${
+						moderationCase.caseId
+					}** was removed by ${
+						interaction.member
+					} at ${client.formatter.time(
+						new Date()
+					)}. The timeout ${expire} ${endsAt}`,
 					fields: [
 						{
 							name: "Responsible Moderator",
@@ -146,7 +131,7 @@ export default class AddSubCommand extends SubCommand {
 							inline: true
 						},
 						{
-							name: "Warn Reason",
+							name: "Timeout Removal Reason",
 							value: moderationCase.reason,
 							inline: true
 						}
@@ -179,7 +164,7 @@ export default class AddSubCommand extends SubCommand {
 				}
 
 				client.util.success(interaction, {
-					message: `Successfully warned ${member} (**ID:** ${
+					message: `Successfully removed timed out from ${member} (**ID:** ${
 						moderationCase.caseId
 					}) ${!isDMable ? "User was unable to be DMed." : ""}`
 				});

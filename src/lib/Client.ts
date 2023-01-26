@@ -1,6 +1,7 @@
 import { Client, ClientOptions, Collection } from "discord.js";
 import { CommandHandler } from "@lib/CommandHandler";
 import { Constants } from "@core/constants";
+import type { EditSnipe, Snipe } from "@typings/main";
 import { Formatter } from "@lib/Formatter";
 import { ListenerHandler } from "@lib/ListenerHandler";
 import { Logger } from "@lib/Logger";
@@ -15,9 +16,11 @@ export class AstraniumClient<
 	public commandHandler: CommandHandler;
 	public config: AstraniumConfig;
 	public db: PrismaClient;
+	public editSnipes: Collection<string, EditSnipe[]>;
 	public formatter: typeof Formatter;
 	public listenerHandler: ListenerHandler;
 	public logger: Logger;
+	public snipes: Collection<string, Snipe[]>;
 	public util: typeof Util;
 	public xpCooldowns: Collection<string, number>;
 
@@ -26,6 +29,7 @@ export class AstraniumClient<
 
 		this.config = config;
 		this.db = global.prisma;
+		this.editSnipes = new Collection<string, EditSnipe[]>();
 		this.formatter = Formatter;
 		this.logger = new Logger();
 		this.util = Util;

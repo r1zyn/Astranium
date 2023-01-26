@@ -71,7 +71,7 @@
 	},
 	"include": [
 		"src",
-		"typings/discord.js/index.d.ts"
+		"typings"
 	],
 	"exclude": [
 		"build",

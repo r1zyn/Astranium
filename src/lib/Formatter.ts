@@ -19,6 +19,8 @@ import {
 	roleMention
 } from "discord.js";
 
+import timestring from "timestring";
+
 export class Formatter {
 	public static capitalize([first, ...rest]: string): string {
 		return first === undefined
@@ -109,6 +111,18 @@ export class Formatter {
 				return "rd";
 			default:
 				return "th";
+		}
+	}
+
+	public static timestring(
+		input: string,
+		returnUnit?: timestring.ReturnUnit | undefined,
+		opts?: timestring.Options | undefined
+	): number | null {
+		try {
+			return timestring(input, returnUnit, opts);
+		} catch (_) {
+			return null;
 		}
 	}
 

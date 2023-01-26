@@ -12,9 +12,11 @@ import config from "../astranium.config";
 global.logger = new Logger();
 global.prisma = new PrismaClient();
 
-new Promise((resolve: (value: unknown) => void): void => {
-	resolve(initProcess(config));
-})
+new Promise<void>(
+	(resolve: (value: void | PromiseLike<void>) => void): void => {
+		resolve(initProcess(config));
+	}
+)
 	.then(async (): Promise<void> => {
 		const client: AstraniumClient = new AstraniumClient(config);
 		client.start();

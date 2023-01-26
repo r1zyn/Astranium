@@ -41,13 +41,7 @@ export default class ConfessCommand extends Command {
 	public async exec(
 		client: AstraniumClient,
 		interaction: SlashCommandInteraction<"cached">
-	): Promise<
-		| void
-		| InteractionResponse<boolean>
-		| Message<true>
-		| Message<false>
-		| undefined
-	> {
+	): Promise<void> {
 		const confessionsChannel: ForumChannel | null =
 			await client.util.fetchChannel<ForumChannel>(
 				Constants.Channels["confessions"],

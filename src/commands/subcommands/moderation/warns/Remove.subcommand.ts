@@ -79,12 +79,12 @@ export default class RemoveSubCommand extends SubCommand {
 			.then(async (moderationCase: ModerationCase): Promise<void> => {
 				const loggingEmbed: EmbedBuilder = client.util.embed({
 					author: {
-						name: `${member.user.tag} - Server Warn Removal (Case ID ${caseId})`,
+						name: `${member.user.tag} - Server Warn Removal (Case ID ${moderationCase.caseId})`,
 						iconURL: member.user.displayAvatarURL()
 					},
-					description: `${member}'s warn **${caseId}** was removed at ${client.formatter.time(
-						new Date()
-					)}.`,
+					description: `${member}'s warn **${
+						moderationCase.caseId
+					}** was removed at ${client.formatter.time(new Date())}.`,
 					fields: [
 						{
 							name: "Responsible Moderator",
