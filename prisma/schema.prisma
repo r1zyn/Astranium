@@ -20,22 +20,23 @@ model Event {
 }
 
 model Member {
-    id       String           @id @unique
-    verified Boolean          @default(false)
-    cases    ModerationCase[]
-    xp       Int              @default(0)
-    level    Int              @default(0)
-    about    String?
+    id         String           @id @unique
+    verified   Boolean          @default(false)
+    cases      ModerationCase[]
+    xp         Int              @default(0)
+    level      Int              @default(0)
+    requiredXp Int              @default(100)
+    about      String?
 }
 
 model ModerationCase {
-    caseId      String   @id @unique
-    member      Member   @relation(fields: [memberId], references: [id])
+    caseId      String    @id @unique
+    member      Member    @relation(fields: [memberId], references: [id])
     memberId    String
     moderatorId String
-    reason      String   @default("No reason was provided by the moderator.")
-    date        DateTime @default(now())
-	expires		DateTime?
+    reason      String    @default("No reason was provided by the moderator.")
+    date        DateTime  @default(now())
+    expires     DateTime?
     type        String
 }
 

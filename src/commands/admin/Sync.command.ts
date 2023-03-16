@@ -1,5 +1,6 @@
 import { Command } from "@lib/Command";
 
+import MembersSubCommand from "../subcommands/admin/sync/Members.subcommand";
 import StatsSubCommand from "@subcommands/admin/sync/Stats.subcommand";
 
 export default class SyncCommand extends Command {
@@ -10,8 +11,8 @@ export default class SyncCommand extends Command {
 			permissions: {
 				user: ["Administrator"]
 			},
-			subcommands: [new StatsSubCommand()],
-			usage: "sync stats"
+			subcommands: [new StatsSubCommand(), new MembersSubCommand()],
+			usage: "sync stats | members"
 		});
 	}
 }

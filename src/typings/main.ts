@@ -5,34 +5,13 @@ import type {
 	FetchMembersOptions,
 	GuildMember,
 	GuildTextBasedChannel,
-	Message,
 	TextBasedChannel,
 	User,
 	UserResolvable
 } from "discord.js";
 
 export interface AstraniumEvents {
-	memberXpAdd: [
-		interaction: SlashCommandInteraction,
-		member: GuildMember,
-		addedXp: number
-	];
-	memberXpSet: [
-		interaction: SlashCommandInteraction,
-		member: GuildMember,
-		setXp: number
-	];
-	memberLevelUp: [
-		channel: GuildTextBasedChannel | null,
-		member: GuildMember,
-		newLevel: number
-	];
-	memberLevelAdd: [
-		message: Message,
-		member: GuildMember,
-		addedLevels: number
-	];
-	memberLevelSet: [message: Message, member: GuildMember, setLevel: number];
+	memberLevelUp: [channel: GuildTextBasedChannel | null, member: GuildMember];
 }
 
 export interface EditSnipe {
@@ -80,6 +59,12 @@ export interface MessageSelectMenuOption {
 	label: string;
 	description: string;
 	value: string;
+}
+
+export interface SetXpOptions {
+	xp: number;
+	member: GuildMember;
+	channel?: GuildTextBasedChannel;
 }
 
 export type SlashCommandInteraction<T extends CacheType = CacheType> =

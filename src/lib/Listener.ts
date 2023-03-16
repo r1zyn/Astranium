@@ -14,7 +14,8 @@ export class Listener {
 		this.setOnce(options.once ?? false);
 	}
 
-	public async exec(..._args: any[]): Promise<any> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public async exec(...args: any[]): Promise<any> {
 		global.logger.error(
 			`Listener class ${this.constructor.name} "exec" method has not been implemented`,
 			`${this.constructor.name.replace("Listener", "")}Listener`,
@@ -66,8 +67,51 @@ export type ProcessEvents =
 	| "exit"
 	| "message"
 	| "rejectionHandled"
-	| "uncaughtException"
+	| UncaughtExceptionOrigin
 	| "uncaughtExceptionMonitor"
-	| "unhandledRejection"
 	| "warning"
-	| "worker";
+	| "worker"
+	| Signals;
+
+export type Signals =
+	| "SIGABRT"
+	| "SIGALRM"
+	| "SIGBUS"
+	| "SIGCHLD"
+	| "SIGCONT"
+	| "SIGFPE"
+	| "SIGHUP"
+	| "SIGILL"
+	| "SIGINT"
+	| "SIGIO"
+	| "SIGIOT"
+	| "SIGKILL"
+	| "SIGPIPE"
+	| "SIGPOLL"
+	| "SIGPROF"
+	| "SIGPWR"
+	| "SIGQUIT"
+	| "SIGSEGV"
+	| "SIGSTKFLT"
+	| "SIGSTOP"
+	| "SIGSYS"
+	| "SIGTERM"
+	| "SIGTRAP"
+	| "SIGTSTP"
+	| "SIGTTIN"
+	| "SIGTTOU"
+	| "SIGUNUSED"
+	| "SIGURG"
+	| "SIGUSR1"
+	| "SIGUSR2"
+	| "SIGVTALRM"
+	| "SIGWINCH"
+	| "SIGXCPU"
+	| "SIGXFSZ"
+	| "SIGBREAK"
+	| "SIGLOST"
+	| "SIGINFO";
+
+export type UncaughtExceptionOrigin =
+	| "uncaughtException"
+	| "unhandledRejection";

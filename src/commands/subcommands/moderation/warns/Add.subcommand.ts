@@ -69,8 +69,6 @@ export default class AddSubCommand extends SubCommand {
 			});
 		}
 
-		await client.util.syncMember(member);
-
 		if (
 			interaction.member.roles.highest.comparePositionTo(
 				member.roles.highest

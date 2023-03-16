@@ -63,8 +63,6 @@ export default class RemoveSubCommand extends SubCommand {
 			});
 		}
 
-		await client.util.syncMember(member);
-
 		await member
 			.timeout(null, reason ?? undefined)
 			.then(async (): Promise<void> => {

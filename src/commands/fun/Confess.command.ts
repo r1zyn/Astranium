@@ -1,9 +1,4 @@
-import {
-	ApplicationCommandOptionType,
-	ForumChannel,
-	InteractionResponse,
-	Message
-} from "discord.js";
+import { ApplicationCommandOptionType, ForumChannel } from "discord.js";
 import type { AstraniumClient } from "@lib/Client";
 import { Command } from "@lib/Command";
 import { Constants } from "@core/constants";

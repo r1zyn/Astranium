@@ -34,11 +34,12 @@ import type {
 	ErrorOptions,
 	GenericFunction,
 	MemberFetchOptions,
+	SetXpOptions,
 	SlashCommandInteraction,
 	WarnOptions
 } from "@typings/main";
 import { Formatter } from "@lib/Formatter";
-import type { SubCommand } from "@lib/SubCommand";
+import type { Member, Prisma } from "@prisma/client";
 
 import { arch, hostname, platform, release, userInfo } from "os";
 import fetch, { Response } from "node-fetch";
@@ -239,21 +240,54 @@ export class Util {
 		const subCommandName: string = interaction.options.getSubcommand(true);
 
 		if (command.subcommands) {
-			command.subcommands.forEach(
-				async (subcommand: SubCommand): Promise<void> => {
-					if (subCommandName === subcommand.name) {
-						try {
-							await subcommand.exec(client, interaction);
-						} catch (error) {
-							client.util.error(interaction, {
-								emitter: `${command.name}Command`,
-								error
-							});
-						}
+			for (const subcommand of command.subcommands) {
+				if (subCommandName === subcommand.name) {
+					try {
+						await subcommand.exec(client, interaction);
+					} catch (error) {
+						client.util.error(interaction, {
+							emitter: `${command.name}Command`,
+							error
+						});
 					}
 				}
-			);
+			}
 		}
+	}
+
+	public static nextLevel(
+		level: number,
+		levels: number[]
+	): number | undefined {
+		let nextLevel: number | undefined = undefined;
+
+		const setLevel: (l?: number) => number | undefined = (
+			l?: number
+		): number | undefined => (nextLevel = l);
+
+		for (let i = 0; i < levels.length; i++) {
+			const current: number = levels[i];
+			const isFirst: boolean = i === 0;
+			const isLast: boolean = i === levels.length - 1;
+
+			if (isFirst) {
+				if (level < current) {
+					setLevel(current);
+					break;
+				}
+			} else {
+				const previous: number = levels[i - 1];
+
+				if (previous < level && level < current) {
+					setLevel(current);
+					break;
+				} else if (isLast && level > current) {
+					setLevel(undefined);
+				}
+			}
+		}
+
+		return nextLevel;
 	}
 
 	public static async paginate<T extends any[] = any[]>(
@@ -435,6 +469,77 @@ export class Util {
 		});
 	}
 
+	private static async requiredXp(
+		member: GuildMember | Member
+	): Promise<number> {
+		const amount: (requiredXp: number, level: number) => number = (
+			requiredXp: number,
+			level: number
+		): number =>
+			Math.round(5 * (level ^ 2) + 50 * level + 100 - requiredXp / 2);
+
+		if ("user" in member) {
+			const { requiredXp, level }: Member = await this.syncMember(member);
+			return amount(requiredXp, level);
+		} else {
+			return amount(member.requiredXp, member.level);
+		}
+	}
+
+	public static async setXp(
+		client: AstraniumClient,
+		{ xp, member, channel }: SetXpOptions
+	): Promise<void> {
+		const where: Prisma.MemberWhereUniqueInput = { id: member.id };
+		const m: Member = (await global.prisma.member.findUnique({
+			where
+		})) as Member;
+
+		let levelDiff: number = 0;
+		let excessXp: number = xp;
+		let requiredXp: number = await this.requiredXp(m);
+
+		if (xp < 0) {
+			while (excessXp > requiredXp) {
+				excessXp -= xp - requiredXp;
+				requiredXp += requiredXp * (m.level - levelDiff * 80);
+				levelDiff++;
+			}
+
+			await global.prisma.member.update({
+				where,
+				data: {
+					level: m.level - levelDiff <= 0 ? 0 : m.level - levelDiff,
+					xp: excessXp < 0 ? 0 : excessXp
+				}
+			});
+		} else if (xp > m.requiredXp) {
+			while (excessXp > requiredXp) {
+				excessXp -= xp - requiredXp;
+				requiredXp += requiredXp * (m.level * 80);
+				levelDiff++;
+			}
+
+			await global.prisma.member.update({
+				where,
+				data: {
+					level: m.level + levelDiff,
+					xp: excessXp <= 0 ? 0 : excessXp,
+					requiredXp
+				}
+			});
+
+			client.emit("memberLevelUp", channel ?? null, member);
+		} else if (xp <= m.requiredXp) {
+			await global.prisma.member.update({
+				where,
+				data: {
+					xp
+				}
+			});
+		}
+	}
+
 	public static success(
 		interaction: SlashCommandInteraction,
 		{ ephemeral = true, message, method = "reply" }: WarnOptions
@@ -455,52 +560,75 @@ export class Util {
 		}
 	}
 
-	public static async syncMember(member: GuildMember): Promise<void> {
-		if (
-			!(await global.prisma.member.findUnique({
-				where: { id: member.id }
-			})) &&
-			!member.user.bot
-		) {
-			await global.prisma.member.create({ data: { id: member.id } });
+	public static async syncMember(member: GuildMember): Promise<Member> {
+		let m: Member | null = await global.prisma.member.findUnique({
+			where: { id: member.id }
+		});
+
+		if (!m)
+			m = await global.prisma.member.create({ data: { id: member.id } });
+
+		const levels: number[] = Object.keys(Constants.LevelRoles).map(
+			(value: string): number => parseInt(value)
+		);
+
+		const level: number = m.level;
+
+		if (levels.includes(level)) {
+			const roles: string[] = levels
+				.filter(
+					(level: number): boolean =>
+						level <= level &&
+						!member.roles.cache.has(
+							Constants.LevelRoles[level.toString()]
+						)
+				)
+				.map(
+					(level: number): string =>
+						Constants.LevelRoles[level.toString()]
+				);
+
+			await member.roles.add(roles);
 		}
+
+		return m;
 	}
 
 	public static async syncMembers(guild: Guild): Promise<void> {
-		(await guild.members.fetch()).forEach(this.syncMember);
+		(await guild.members.fetch())
+			.filter((member: GuildMember): boolean => !member.user.bot)
+			.forEach(this.syncMember);
 	}
 
 	public static async syncStats(guild: Guild): Promise<void> {
-		const allMembers: VoiceChannel | null =
-			await this.fetchChannel<VoiceChannel>(
-				Constants.Channels["all_members"],
-				guild
-			);
-		const members: VoiceChannel | null =
-			await this.fetchChannel<VoiceChannel>(
-				Constants.Channels["members"],
-				guild
-			);
-		const bots: VoiceChannel | null = await this.fetchChannel<VoiceChannel>(
+		const allMembers: VoiceChannel = await this.fetchChannel<VoiceChannel>(
+			Constants.Channels["all_members"],
+			guild
+		);
+		const members: VoiceChannel = await this.fetchChannel<VoiceChannel>(
+			Constants.Channels["members"],
+			guild
+		);
+		const bots: VoiceChannel = await this.fetchChannel<VoiceChannel>(
 			Constants.Channels["bots"],
 			guild
 		);
-		const boosters: VoiceChannel | null =
-			await this.fetchChannel<VoiceChannel>(
-				Constants.Channels["boost_level"],
-				guild
-			);
-
-		if (!allMembers || !members || !bots || !boosters) return;
+		const boostLevel: VoiceChannel = await this.fetchChannel<VoiceChannel>(
+			Constants.Channels["boost_level"],
+			guild
+		);
 
 		allMembers.setName(
-			allMembers.name.replace(/\d+/, guild.memberCount.toString())
+			allMembers.name.replace(
+				/\d+/,
+				(await guild.members.fetch()).size.toString()
+			)
 		);
 
 		members.setName(
 			members.name.replace(
 				/\d+/,
-				guild.members.cache
+				(await guild.members.fetch())
 					.filter((m: GuildMember): boolean => !m.user.bot)
 					.size.toString()
 			)
@@ -509,14 +637,14 @@ export class Util {
 		bots.setName(
 			bots.name.replace(
 				/\d+/,
-				guild.members.cache
+				(await guild.members.fetch())
 					.filter((m: GuildMember): boolean => m.user.bot)
 					.size.toString()
 			)
 		);
 
-		boosters.setName(
-			boosters.name.replace(/\d+/, guild.premiumTier.toString())
+		boostLevel.setName(
+			boostLevel.name.replace(/\d+/, guild.premiumTier.toString())
 		);
 	}
 

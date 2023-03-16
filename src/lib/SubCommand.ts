@@ -178,7 +178,8 @@ export class SubCommand extends SlashCommandSubcommandBuilder {
 
 	public async exec(
 		client: AstraniumClient,
-		_interaction: CommandInteraction
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		interaction: CommandInteraction
 	): Promise<any> {
 		client.logger.error(
 			`Command class ${this.constructor.name} "exec" method has not been implemented`,

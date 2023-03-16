@@ -55,8 +55,6 @@ export default class ClearSubCommand extends SubCommand {
 			});
 		}
 
-		await client.util.syncMember(member);
-
 		if (
 			interaction.member.roles.highest.comparePositionTo(
 				member.roles.highest

@@ -32,6 +32,7 @@ export class AstraniumClient<
 		this.editSnipes = new Collection<string, EditSnipe[]>();
 		this.formatter = Formatter;
 		this.logger = new Logger();
+		this.snipes = new Collection<string, Snipe[]>();
 		this.util = Util;
 		this.xpCooldowns = new Collection<string, number>();
 

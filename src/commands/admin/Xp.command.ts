@@ -1,5 +1,9 @@
 import { Command } from "@lib/Command";
 
+import AddSubCommand from "../subcommands/admin/xp/Add.subcommand";
+import RemoveSubCommand from "../subcommands/admin/xp/Remove.subcommand";
+import SetSubCommand from "../subcommands/admin/xp/Set.subcommand";
+
 export default class XpCommand extends Command {
 	public constructor() {
 		super("xp", {
@@ -8,7 +12,11 @@ export default class XpCommand extends Command {
 			permissions: {
 				user: ["Administrator"]
 			},
-			subcommands: [],
+			subcommands: [
+				new AddSubCommand(),
+				new RemoveSubCommand(),
+				new SetSubCommand()
+			],
 			usage: "xp add | remove | set"
 		});
 	}

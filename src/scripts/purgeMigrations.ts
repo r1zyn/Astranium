@@ -1,6 +1,8 @@
 import { join } from "path";
 import { readdirSync, rmdirSync, rmSync, statSync } from "fs";
 
+import chalk from "chalk";
+
 function generatePath(...childPaths: string[]): string {
 	const paths: string[] = [process.cwd(), "prisma", "migrations"];
 	childPaths &&
@@ -27,9 +29,9 @@ if (migrationFolders.length > 0) {
 		});
 
 		console.log(
-			`Successfully purged ${
-				migrationFolders.length
-			} Prisma migrations from ${generatePath()}`
+			`✔ Successfully purged ${migrationFolders.length} ${chalk.bold(
+				"Prisma migrations"
+			)} from ${generatePath()}`
 		);
 	} catch (error) {
 		global.logger.error(error, "prisma");

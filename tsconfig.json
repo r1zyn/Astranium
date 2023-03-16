@@ -65,7 +65,7 @@
 		"noImplicitThis": true, // Enable error reporting when `this` is given the type `any`.
 		"useUnknownInCatchVariables": false, // Type catch clause variables as 'unknown' instead of 'any'.
 		"alwaysStrict": true, // Ensure 'use strict' is always emitted.
-		"allowUnusedLabels": true, // Disable error reporting for unused labels.
+		"allowUnusedLabels": false, // Disable error reporting for unused labels.
 		"allowUnreachableCode": false, // Disable error reporting for unreachable code.
 		"skipLibCheck": true // Skip type checking all .d.ts files.
 	},

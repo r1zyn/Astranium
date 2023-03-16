@@ -119,29 +119,192 @@ export class Constants {
 	};
 
 	public static ReactionMessages = {
-		verification: "1061123208398520430"
+		verification: "1085773581281136670"
+	};
+
+	public static ReactionRoles = {
+		// Pronouns roles
+		"he/him": {
+			role: "927804994558771290",
+			reaction: "one",
+			messageID: Constants.ReactionMessages
+		},
+		"he/they": {
+			role: "1071926106648748132",
+			reaction: "two",
+			messageID: Constants.ReactionMessages
+		},
+		"she/her": {
+			role: "927804777826484244",
+			reaction: "three",
+			messageID: Constants.ReactionMessages
+		},
+		"she/they": {
+			role: "1071926332478460004",
+			reaction: "four",
+			messageID: Constants.ReactionMessages
+		},
+		"they/them": {
+			role: "927805038552821800",
+			reaction: "five",
+			messageID: Constants.ReactionMessages
+		},
+		"any_pronouns": {
+			role: "927805082219724810",
+			reaction: "six",
+			messageID: Constants.ReactionMessages
+		},
+		// Gender roles
+		"male": {
+			role: "1071928543765864499",
+			reaction: "male_sign",
+			messageID: Constants.ReactionMessages
+		},
+		"female": {
+			role: "1071928574514298911",
+			reaction: "female_sign",
+			messageID: Constants.ReactionMessages
+		},
+		"non_binary": {
+			role: "1071928603740217435",
+			reaction: "white_circle",
+			messageID: Constants.ReactionMessages
+		},
+		"other_gender": {
+			role: "1071928631628148917",
+			reaction: "blue_circle",
+			messageID: Constants.ReactionMessages
+		},
+		// Age roles
+		"13-15": {
+			role: "927805115606401055",
+			reaction: "one",
+			messageID: Constants.ReactionMessages
+		},
+		"16-19": {
+			role: "927805159768227910",
+			reaction: "two",
+			messageID: Constants.ReactionMessages
+		},
+		"20+": {
+			role: "927805196845858846",
+			reaction: "three",
+			messageID: Constants.ReactionMessages
+		},
+		// Region roles
+		"north_america": {
+			role: "927805235789963355",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"south_america": {
+			role: "927805260343427122",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"europe": {
+			role: "927805278475415582",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"asia": {
+			role: "927805294627667978",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"oceania": {
+			role: "927805314961637376",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		// Ping roles
+		"announcement_ping": {
+			role: "927823328847216650",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"event_ping": {
+			role: "927823396773982230",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"giveaway_ping": {
+			role: "927823425647546388",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"qotd_ping": {
+			role: "927823456349847582",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		},
+		"poll_ping": {
+			role: "927823486477557780",
+			reaction: "",
+			messageID: Constants.ReactionMessages
+		}
 	};
 
 	public static Roles = {
-		member: "927725674049978398",
-		staff: "1060496582904131595",
-		level: "1060069342735245372",
-		roles: "927821116951650334",
-		about: "927805534600585218",
-		pings: "927823246525599795",
-		giveawayWinner: "927756560644583474",
-		regular: "927755968840863744",
-		active: "927756054673121280",
-		dedicated: "927756139058315294",
-		ascension: "927756240543694951",
-		legendary: "927756332424105985",
-		supreme: "927756402888409109",
-		overlord: "927756486367666207",
-		announcement_ping: "927823328847216650",
-		event_ping: "927823396773982230",
-		giveaway_ping: "927823425647546388",
-		qotd_ping: "927823456349847582",
-		poll_ping: "927823486477557780"
+		// Title roles
+		"staff": "1060496582904131595",
+		"level": "1060069342735245372",
+		"roles": "927821116951650334",
+		"about": "927805534600585218",
+		"pings": "927823246525599795",
+		// Member roles
+		"giveawayWinner": "927756560644583474",
+		"member": "927725674049978398",
+		// Level roles
+		"overlord": "927756486367666207",
+		"supreme": "927756402888409109",
+		"legendary": "927756332424105985",
+		"ascension": "927756240543694951",
+		"dedicated": "927756139058315294",
+		"regular": "927755968840863744",
+		"active": "927756054673121280",
+		// Pronouns roles
+		"he/him": "927804994558771290",
+		"he/they": "1071926106648748132",
+		"she/her": "927804777826484244",
+		"she/they": "1071926332478460004",
+		"they/them": "927805038552821800",
+		"any_pronouns": "927805082219724810",
+		// Gender roles
+		"male": "1071928543765864499",
+		"female": "1071928574514298911",
+		"non_binary": "1071928603740217435",
+		"other_gender": "1071928631628148917",
+		// Age roles
+		"13-15": "927805115606401055",
+		"16-19": "927805159768227910",
+		"20+": "927805196845858846",
+		// Region roles
+		"north_america": "927805235789963355",
+		"south_america": "927805260343427122",
+		"europe": "927805278475415582",
+		"asia": "927805294627667978",
+		"oceania": "927805314961637376",
+		// Ping roles
+		"announcement_ping": "927823328847216650",
+		"event_ping": "927823396773982230",
+		"giveaway_ping": "927823425647546388",
+		"qotd_ping": "927823456349847582",
+		"poll_ping": "927823486477557780"
+	};
+
+	public static LevelRoles = {
+		"5": this.Roles["active"],
+		"15": this.Roles["regular"],
+		"25": this.Roles["dedicated"],
+		"40": this.Roles["ascension"],
+		"60": this.Roles["legendary"],
+		"80": this.Roles["supreme"],
+		"100": this.Roles["overlord"]
+	};
+
+	public static Users = {
+		qotd_bot: "713586207119900693"
 	};
 
 	public static Webhooks = {

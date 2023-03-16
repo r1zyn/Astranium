@@ -87,8 +87,6 @@ export default class KickCommand extends Command {
 			});
 		}
 
-		await client.util.syncMember(member);
-
 		await member.kick(reason ?? undefined).then(async (): Promise<void> => {
 			if (!member.user.bot) {
 				await client.db.moderationCase

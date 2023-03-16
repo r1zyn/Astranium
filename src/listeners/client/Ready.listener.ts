@@ -15,11 +15,11 @@ export default class ReadyListener extends Listener {
 		client.user.setPresence({
 			activities: [
 				{
-					name: "The Astranium",
+					name: "over the server",
 					type: ActivityType.Watching
 				}
 			],
-			status: "online"
+			status: "idle"
 		});
 
 		client.logger.ready(

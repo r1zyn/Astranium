@@ -2,7 +2,6 @@ import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import { AstraniumClient } from "@lib/Client";
 import { SlashCommandInteraction } from "@typings/main";
 import { SubCommand } from "@lib/SubCommand";
-import type { Member, Prisma } from "@prisma/client";
 
 export default class RemoveSubCommand extends SubCommand {
 	public constructor() {
@@ -37,9 +36,6 @@ export default class RemoveSubCommand extends SubCommand {
 			interaction.options.getUser("member", true)
 		);
 		const amount: number = interaction.options.getInteger("amount", true);
-		const where: Prisma.MemberWhereUniqueInput = {
-			id: member.id
-		};
 
 		if (member.user.bot) {
 			return client.util.warn(interaction, {
@@ -47,22 +43,13 @@ export default class RemoveSubCommand extends SubCommand {
 			});
 		}
 
-		await client.util.syncMember(member);
+		const { xp }: { xp: number } = await client.util.syncMember(member);
+		const pendingXp: number = xp - amount;
 
-		const { xp }: { xp: number } = (await client.db.member.findUnique({
-			where
-		})) as Member;
-		let pendingXp: number = xp - amount;
-
-		if (pendingXp < 0) pendingXp = 0;
-		// Note: change this so levels also derank
-
-		await client.db.member
-			.update({
-				where,
-				data: {
-					xp: pendingXp
-				}
+		await client.util
+			.setXp(client, {
+				xp: pendingXp,
+				member
 			})
 			.then((): void =>
 				client.util.success(interaction, {

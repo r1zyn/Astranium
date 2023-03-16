@@ -44,6 +44,15 @@ export default class ViewSubCommand extends SubCommand {
 			false
 		);
 
+		const user: User = interaction.options.getUser("member", true);
+		const member: GuildMember = await interaction.guild.members.fetch(user);
+
+		if (member.user.bot) {
+			return client.util.warn(interaction, {
+				message: "The specified member cannot be a bot user."
+			});
+		}
+
 		function formatCase(
 			moderationCase: ModerationCase,
 			index: number
@@ -60,10 +69,6 @@ export default class ViewSubCommand extends SubCommand {
 		}
 
 		if (!caseId) {
-			const user: User = interaction.options.getUser("member", true);
-			const member: GuildMember = await interaction.guild.members.fetch(
-				user
-			);
 			const cases: string[] = (
 				await client.db.moderationCase.findMany({
 					where: { memberId: member.id }
@@ -76,8 +81,6 @@ export default class ViewSubCommand extends SubCommand {
 						"No moderation cases were found for the specified server member."
 				});
 			}
-
-			await client.util.syncMember(member);
 
 			await client.util.paginate<string[]>(cases, 4, interaction, {
 				author: {
@@ -93,7 +96,7 @@ export default class ViewSubCommand extends SubCommand {
 				await client.db.moderationCase.findFirst({
 					where: {
 						caseId,
-						memberId: interaction.options.getUser("member", true).id
+						memberId: member.id
 					}
 				});
 
@@ -104,15 +107,10 @@ export default class ViewSubCommand extends SubCommand {
 				});
 			}
 
-			const member: GuildMember = await interaction.guild.members.fetch(
-				moderationCase.memberId
-			);
 			const moderator: GuildMember =
 				await interaction.guild.members.fetch(
 					moderationCase.moderatorId
 				);
-
-			await client.util.syncMember(member);
 
 			const caseNumber: number =
 				(

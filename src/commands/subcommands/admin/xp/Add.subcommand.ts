@@ -2,7 +2,6 @@ import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import { AstraniumClient } from "@lib/Client";
 import { SlashCommandInteraction } from "@typings/main";
 import { SubCommand } from "@lib/SubCommand";
-import type { Member, Prisma } from "@prisma/client";
 
 export default class AddSubCommand extends SubCommand {
 	public constructor() {
@@ -37,9 +36,6 @@ export default class AddSubCommand extends SubCommand {
 			interaction.options.getUser("member", true)
 		);
 		const amount: number = interaction.options.getInteger("amount", true);
-		const where: Prisma.MemberWhereUniqueInput = {
-			id: member.id
-		};
 
 		if (member.user.bot) {
 			return client.util.warn(interaction, {
@@ -47,37 +43,18 @@ export default class AddSubCommand extends SubCommand {
 			});
 		}
 
-		await client.util.syncMember(member);
-
-		const { xp }: { xp: number } = (await client.db.member.findUnique({
-			where
-		})) as Member;
+		const { xp }: { xp: number } = await client.util.syncMember(member);
 		const pendingXp: number = xp + amount;
 
-		await client.db.member
-			.update({
-				where,
-				data: {
-					xp: pendingXp
-				}
+		await client.util
+			.setXp(client, {
+				xp: amount,
+				member
 			})
-			.then(({ level: currentLevel }): void => {
+			.then((): void =>
 				client.util.success(interaction, {
 					message: `Successfully added **${amount}** xp to ${member}. They now have **${pendingXp}** xp.`
-				});
-
-				const pendingLevel: number = Math.floor(
-					0.1 * Math.sqrt(pendingXp)
-				);
-
-				if (pendingLevel > currentLevel) {
-					client.emit(
-						"memberLevelUp",
-						interaction.channel,
-						member,
-						pendingLevel
-					);
-				}
-			});
+				})
+			);
 	}
 }

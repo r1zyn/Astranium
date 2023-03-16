@@ -34,7 +34,7 @@ export default class MessageUpdateListener extends Listener {
 	}
 }
 
-export async function handleEditSnipe(
+async function handleEditSnipe(
 	client: AstraniumClient,
 	{
 		oldMessage,
@@ -99,7 +99,7 @@ export async function handleEditSnipe(
 		},
 		description: `${oldMessage.author} recently edited a message in ${
 			oldMessage.channel
-		} at ${client.formatter.time(newMessage.editedAt, "T")}. ${
+		} at ${client.formatter.time(newMessage.editedAt)}. ${
 			newMessage.url
 				? `Click ${client.formatter.hyperlink(
 						"here",
@@ -128,58 +128,41 @@ export async function handleEditSnipe(
 	}
 
 	if (
-		(oldMessage.mentions.members ||
-			oldMessage.mentions.roles ||
+		((oldMessage.mentions.members?.first() ||
+			oldMessage.mentions.roles?.first() ||
 			oldMessage.mentions.everyone) &&
-		!newMessage.mentions.members &&
-		!newMessage.mentions.roles &&
+			!newMessage.mentions.members?.first()) ||
+		!newMessage.mentions.roles?.first() ||
 		!newMessage.mentions.everyone
 	) {
-		oldMessage.reply({
-			embeds: [
-				client.util.embed({
-					author: {
-						name: `Ghost ping detected from ${oldMessage.author.tag} (edited message)`,
-						iconURL: oldMessage.author.displayAvatarURL()
-					},
-					description: `${
-						oldMessage.author
-					} recently ghost pinged in ${
-						oldMessage.channel
-					} at ${client.formatter.time(new Date(), "T")}.\n\n> ${
-						oldMessage.content
-					}`
-				})
-			]
+		const ghostEmbed: EmbedBuilder = client.util.embed({
+			author: {
+				name: `Ghost ping detected from ${oldMessage.author.tag} (edited message)`,
+				iconURL: oldMessage.author.displayAvatarURL()
+			},
+			description: `${oldMessage.author} recently ghost pinged in ${
+				oldMessage.channel
+			} at ${client.formatter.time(new Date())}. ${
+				newMessage.url
+					? `Click ${client.formatter.hyperlink(
+							"here",
+							newMessage.url
+					  )} to jump to the edited message.`
+					: ""
+			}\n\n> ${oldMessage.content}`
 		});
 
-		messageLogs.send({
-			embeds: [
-				client.util.embed({
-					color: Constants["Defaults"].embed.color.default,
-					author: {
-						name: `Ghost ping detected from ${oldMessage.author.tag} (edited message)`,
-						iconURL: oldMessage.author.displayAvatarURL()
-					},
-					description: `${
-						oldMessage.author
-					} recently ghost pinged in ${
-						oldMessage.channel
-					} at ${client.formatter.time(new Date(), "T")}. ${
-						newMessage.url
-							? `Click ${client.formatter.hyperlink(
-									"here",
-									newMessage.url
-							  )} to jump to the edited message.`
-							: ""
-					}\n\n> ${oldMessage.content}`
-				})
-			]
+		await oldMessage.reply({
+			embeds: [ghostEmbed]
+		});
+
+		await messageLogs.send({
+			embeds: [ghostEmbed]
 		});
 	}
 }
 
-export async function handleStarboard(
+async function handleStarboard(
 	client: AstraniumClient,
 	{
 		oldMessage,
@@ -246,8 +229,8 @@ export async function handleStarboard(
 			star.starId
 		);
 		starMessage.editable &&
-			starMessage.edit({
+			(await starMessage.edit({
 				embeds: [embed]
-			});
+			}));
 	}
 }

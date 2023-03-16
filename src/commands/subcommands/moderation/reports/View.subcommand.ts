@@ -1,10 +1,4 @@
-import {
-	ApplicationCommandOptionType,
-	GuildMember,
-	Message,
-	TextChannel,
-	User
-} from "discord.js";
+import { ApplicationCommandOptionType, GuildMember, User } from "discord.js";
 import type { AstraniumClient } from "@lib/Client";
 import { Constants } from "@core/constants";
 import type { Report } from "@prisma/client";
@@ -57,6 +51,13 @@ export default class ViewSubCommand extends SubCommand {
 			const member: GuildMember = await interaction.guild.members.fetch(
 				user
 			);
+
+			if (member.user.bot) {
+				return client.util.warn(interaction, {
+					message: "The specified member cannot be a bot user."
+				});
+			}
+
 			const cases: string[] = (
 				await client.db.report.findMany({
 					where: { memberId: member.id }
@@ -69,8 +70,6 @@ export default class ViewSubCommand extends SubCommand {
 						"No reports were found for the specified server member."
 				});
 			}
-
-			await client.util.syncMember(member);
 
 			await client.util.paginate<string[]>(cases, 4, interaction, {
 				author: {

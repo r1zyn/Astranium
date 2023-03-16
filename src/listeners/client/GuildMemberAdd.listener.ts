@@ -18,6 +18,9 @@ export default class GuildMemberAddListener extends Listener {
 		if (member.partial) await member.fetch();
 
 		await client.util.syncStats(member.guild);
-		await client.util.syncMember(member);
+
+		if (!member.user.bot) {
+			await client.util.syncMember(member);
+		}
 	}
 }

@@ -59,12 +59,6 @@ export default class BanCommand extends Command {
 		const reason: string | null = interaction.options.getString("reason");
 		const clear: boolean = interaction.options.getBoolean("clear") || false;
 
-		if (
-			!(await client.db.member.findUnique({ where: { id: member.id } }))
-		) {
-			await client.db.member.create({ data: { id: member.id } });
-		}
-
 		const caseNumber: number =
 			(
 				await client.db.moderationCase.findMany({
@@ -101,8 +95,6 @@ export default class BanCommand extends Command {
 				message: "Unable to ban the member as they are not bannable."
 			});
 		}
-
-		await client.util.syncMember(member);
 
 		await member
 			.ban({

@@ -90,8 +90,6 @@ export default class CreateSubCommand extends SubCommand {
 			});
 		}
 
-		await client.util.syncMember(member);
-
 		if (!duration) {
 			return client.util.warn(interaction, {
 				message: "Invalid duration provided. Example: 1d, 2h, 15m"

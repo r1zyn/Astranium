@@ -19,9 +19,8 @@ new Promise<void>(
 )
 	.then(async (): Promise<void> => {
 		const client: AstraniumClient = new AstraniumClient(config);
-		client.start();
 
-		if (client.isReady()) {
+		await client.start().then(async (): Promise<void> => {
 			const astranium: Guild = await client.guilds.fetch(config.guildID);
 
 			if (
@@ -29,16 +28,36 @@ new Promise<void>(
 					where: { id: astranium.id }
 				}))
 			) {
-				await client.db.guild.create({ data: { id: astranium.id } });
+				await client.db.guild
+					.create({ data: { id: astranium.id } })
+					.then((): void =>
+						global.logger.info(
+							"Created database entry for Astranium guild",
+							"prisma"
+						)
+					);
 			}
 
-			setInterval(async (): Promise<void> => {
-				await client.util.syncMembers(astranium);
-				global.logger.info(
-					"Synced Astranium guild members to database",
-					"prisma"
-				);
-			}, 1000 * 60);
-		}
+			await client.util.syncMembers(astranium);
+			await client.util.syncStats(astranium);
+			global.logger.info(
+				"Synced Astranium guild members and statistics to database",
+				"prisma"
+			);
+
+			const interval: NodeJS.Timer = setInterval(
+				async (): Promise<void> => {
+					if (process.exitCode) clearInterval(interval);
+
+					await client.util.syncMembers(astranium);
+					await client.util.syncStats(astranium);
+					global.logger.info(
+						"Synced Astranium guild members and statistics to database",
+						"prisma"
+					);
+				},
+				1000 * 60
+			); // Note: does this execute immediately?
+		});
 	})
 	.catch((error: Error): void => global.logger.error(error, "process", true));

@@ -32,7 +32,7 @@ export default class MessageReactionAddListener extends Listener {
 	}
 }
 
-export async function handleStarboard(
+async function handleStarboard(
 	client: AstraniumClient,
 	reaction: MessageReaction
 ): Promise<void> {
@@ -110,7 +110,7 @@ export async function handleStarboard(
 				const starredMessage: Message<true> =
 					await starboard.messages.fetch(star.starId);
 
-				starredMessage.edit({
+				await starredMessage.edit({
 					content: `:star: **${starReactions} |** ${reaction.message.channel}`
 				});
 			}
@@ -118,7 +118,7 @@ export async function handleStarboard(
 	}
 }
 
-export async function handleVerification(
+async function handleVerification(
 	client: AstraniumClient,
 	reaction: MessageReaction,
 	user: User
