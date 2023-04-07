@@ -57,7 +57,7 @@ new Promise<void>(
 					);
 				},
 				1000 * 60
-			); // Note: does this execute immediately?
+			);
 		});
 	})
 	.catch((error: Error): void => global.logger.error(error, "process", true));

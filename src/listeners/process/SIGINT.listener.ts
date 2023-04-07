@@ -19,9 +19,6 @@ export default class SIGINTListener extends Listener {
 					`Exiting with code ${code} (${Constants.ProcessExitCodes[code]})`,
 					"process"
 			  )
-			: global.logger.info(
-					`Exiting process (${signal} signal)`,
-					"process"
-			  );
+			: global.logger.info(`Exiting process (${signal})`, "process");
 	}
 }

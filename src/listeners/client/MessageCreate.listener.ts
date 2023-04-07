@@ -23,8 +23,9 @@ export default class MessageCreateListener extends Listener {
 			!message.guild ||
 			!message.inGuild() ||
 			!message.channel.isTextBased()
-		)
+		) {
 			return;
+		}
 
 		await handleChatBot(client, message);
 		await handleQotd(client, message);

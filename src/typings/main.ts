@@ -14,6 +14,8 @@ export interface AstraniumEvents {
 	memberLevelUp: [channel: GuildTextBasedChannel | null, member: GuildMember];
 }
 
+export type ClientPlatform = "Desktop" | "Mobile" | "Browser";
+
 export interface EditSnipe {
 	content: EditSnipeContent;
 	author: User;
@@ -47,6 +49,13 @@ export interface ErrorOptions {
 }
 
 export type GenericFunction<T = any> = (...args: any[]) => Promise<T>;
+
+export type MemberAcknowledgements =
+	| "None"
+	| "Server Owner"
+	| "Administrator"
+	| "Staff Member"
+	| "Server Booster";
 
 export type MemberFetchOptions =
 	| UserResolvable

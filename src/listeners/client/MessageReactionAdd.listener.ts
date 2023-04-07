@@ -2,6 +2,8 @@ import type { AstraniumClient } from "@lib/Client";
 import {
 	Attachment,
 	EmbedBuilder,
+	Guild,
+	GuildMember,
 	Message,
 	MessageReaction,
 	TextChannel,
@@ -29,6 +31,41 @@ export default class MessageReactionAddListener extends Listener {
 
 		await handleVerification(client, reaction, user);
 		await handleStarboard(client, reaction);
+		await handleReactionRoles(client, reaction, user);
+	}
+}
+
+async function handleReactionRoles(
+	client: AstraniumClient,
+	reaction: MessageReaction,
+	user: User
+): Promise<void> {
+	const guild: Guild | null = reaction.message.guild;
+
+	if (guild) {
+		if (reaction.message.channelId === Constants.Channels["self_roles"]) {
+			for (const reactionRole of Object.keys(Constants.ReactionRoles)) {
+				const reactionRoleData: {
+					role: string;
+					reaction: string;
+					messageID: string;
+				} = Constants.ReactionRoles[reactionRole];
+
+				if (
+					reaction.emoji.name === reactionRoleData.reaction &&
+					reaction.message.id === reactionRoleData.messageID
+				) {
+					const member: GuildMember = await client.util.fetchMember(
+						guild,
+						user
+					);
+
+					if (!member.roles.cache.has(reactionRoleData.role)) {
+						await member.roles.add(reactionRoleData.role);
+					}
+				}
+			}
+		}
 	}
 }
 

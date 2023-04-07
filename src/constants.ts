@@ -3,6 +3,15 @@ import { Colors, WebhookClient } from "discord.js";
 import chalk from "chalk";
 
 export class Constants {
+	public static ActivityType = {
+		0: "Playing",
+		1: "Streaming",
+		2: "Listening to",
+		3: "Watching",
+		4: "Custom",
+		5: "Competing in"
+	};
+
 	public static Banner = chalk.blue`
                                     ******
                             &*************
@@ -48,10 +57,10 @@ export class Constants {
 	};
 
 	public static Colors: typeof Colors & {
-		Invisible: 0x2f3136;
+		Invisible: 0x2c2d31;
 	} = {
 		...Colors,
-		Invisible: 0x2f3136
+		Invisible: 0x2c2d31
 	};
 
 	public static Embed = {
@@ -119,129 +128,134 @@ export class Constants {
 	};
 
 	public static ReactionMessages = {
-		verification: "1085773581281136670"
+		verification: "1085773581281136670",
+		pronouns: "1093490025838161951",
+		gender: "1093490029747245147",
+		age: "1093490034138677278",
+		location: "1093490037427015721",
+		pings: "1093490041520656394"
 	};
 
 	public static ReactionRoles = {
 		// Pronouns roles
 		"he/him": {
 			role: "927804994558771290",
-			reaction: "one",
-			messageID: Constants.ReactionMessages
+			reaction: "1️⃣",
+			messageID: Constants.ReactionMessages["pronouns"]
 		},
 		"he/they": {
 			role: "1071926106648748132",
-			reaction: "two",
-			messageID: Constants.ReactionMessages
+			reaction: "2️⃣",
+			messageID: Constants.ReactionMessages["pronouns"]
 		},
 		"she/her": {
 			role: "927804777826484244",
-			reaction: "three",
-			messageID: Constants.ReactionMessages
+			reaction: "3️⃣",
+			messageID: Constants.ReactionMessages["pronouns"]
 		},
 		"she/they": {
 			role: "1071926332478460004",
-			reaction: "four",
-			messageID: Constants.ReactionMessages
+			reaction: "4️⃣",
+			messageID: Constants.ReactionMessages["pronouns"]
 		},
 		"they/them": {
 			role: "927805038552821800",
-			reaction: "five",
-			messageID: Constants.ReactionMessages
+			reaction: "5️⃣",
+			messageID: Constants.ReactionMessages["pronouns"]
 		},
 		"any_pronouns": {
 			role: "927805082219724810",
-			reaction: "six",
-			messageID: Constants.ReactionMessages
+			reaction: "6️⃣",
+			messageID: Constants.ReactionMessages["pronouns"]
 		},
 		// Gender roles
 		"male": {
 			role: "1071928543765864499",
-			reaction: "male_sign",
-			messageID: Constants.ReactionMessages
+			reaction: "♂️",
+			messageID: Constants.ReactionMessages["gender"]
 		},
 		"female": {
 			role: "1071928574514298911",
-			reaction: "female_sign",
-			messageID: Constants.ReactionMessages
+			reaction: "♀️",
+			messageID: Constants.ReactionMessages["gender"]
 		},
 		"non_binary": {
 			role: "1071928603740217435",
-			reaction: "white_circle",
-			messageID: Constants.ReactionMessages
+			reaction: "⚪",
+			messageID: Constants.ReactionMessages["gender"]
 		},
 		"other_gender": {
 			role: "1071928631628148917",
-			reaction: "blue_circle",
-			messageID: Constants.ReactionMessages
+			reaction: "⚪",
+			messageID: Constants.ReactionMessages["gender"]
 		},
 		// Age roles
 		"13-15": {
 			role: "927805115606401055",
-			reaction: "one",
-			messageID: Constants.ReactionMessages
+			reaction: "1️⃣",
+			messageID: Constants.ReactionMessages["age"]
 		},
 		"16-19": {
 			role: "927805159768227910",
-			reaction: "two",
-			messageID: Constants.ReactionMessages
+			reaction: "2️⃣",
+			messageID: Constants.ReactionMessages["age"]
 		},
 		"20+": {
 			role: "927805196845858846",
-			reaction: "three",
-			messageID: Constants.ReactionMessages
+			reaction: "3️⃣",
+			messageID: Constants.ReactionMessages["age"]
 		},
 		// Region roles
 		"north_america": {
 			role: "927805235789963355",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "1️⃣",
+			messageID: Constants.ReactionMessages["location"]
 		},
 		"south_america": {
 			role: "927805260343427122",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "2️⃣",
+			messageID: Constants.ReactionMessages["location"]
 		},
 		"europe": {
 			role: "927805278475415582",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "3️⃣",
+			messageID: Constants.ReactionMessages["location"]
 		},
 		"asia": {
 			role: "927805294627667978",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "4️⃣",
+			messageID: Constants.ReactionMessages["location"]
 		},
 		"oceania": {
 			role: "927805314961637376",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "5️⃣",
+			messageID: Constants.ReactionMessages["location"]
 		},
 		// Ping roles
 		"announcement_ping": {
 			role: "927823328847216650",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "1️⃣",
+			messageID: Constants.ReactionMessages["pings"]
 		},
 		"event_ping": {
 			role: "927823396773982230",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "2️⃣",
+			messageID: Constants.ReactionMessages["pings"]
 		},
 		"giveaway_ping": {
 			role: "927823425647546388",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "3️⃣",
+			messageID: Constants.ReactionMessages["pings"]
 		},
 		"qotd_ping": {
 			role: "927823456349847582",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "4️⃣",
+			messageID: Constants.ReactionMessages["pings"]
 		},
 		"poll_ping": {
 			role: "927823486477557780",
-			reaction: "",
-			messageID: Constants.ReactionMessages
+			reaction: "5️⃣",
+			messageID: Constants.ReactionMessages["pings"]
 		}
 	};
 
@@ -301,6 +315,19 @@ export class Constants {
 		"60": this.Roles["legendary"],
 		"80": this.Roles["supreme"],
 		"100": this.Roles["overlord"]
+	};
+
+	public static UserFlags = {
+		ActiveDeveloper: `${this.Emojis["active_developer"]} Active Developer`,
+		CertifiedModerator: `${this.Emojis["certified_moderator"]} Certified Moderator`,
+		HypeSquadOnlineHouse1: `${this.Emojis["hypesquad_bravery"]} HypeSquad Bravery`,
+		HypeSquadOnlineHouse2: `${this.Emojis["hypesquad_brilliance"]} HypeSquad Brilliance`,
+		HypeSquadOnlineHouse3: `${this.Emojis["hypesquad_balance"]} HypeSquad Balance`,
+		Hypesquad: `${this.Emojis["hypesquad"]} HypeSquad Events`,
+		Partner: `${this.Emojis["partner"]} Partnered Server Owner`,
+		PremiumEarlySupporter: `${this.Emojis["early_supporter"]} Early Nitro Supporter`,
+		Staff: `${this.Emojis["discord_employee"]} Discord Employee`,
+		VerifiedDeveloper: `${this.Emojis["verified_developer"]} Early Verified Bot Developer`
 	};
 
 	public static Users = {

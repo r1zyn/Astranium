@@ -194,6 +194,18 @@ export class Util {
 		return "";
 	}
 
+	public static async fetchBannerURL(member: GuildMember): Promise<string> {
+		const user: User = await member.user.fetch(true);
+		const bannerURL: string | null | undefined = user.bannerURL();
+
+		if (bannerURL) {
+			return bannerURL;
+		} else {
+			const hex: string = (user.accentColor as number).toString(16);
+			return `https://singlecolorimage.com/get/${hex}/600x200.png`;
+		}
+	}
+
 	public static async fetchChannel<T extends GuildBasedChannel>(
 		channelId: string,
 		guild: Guild,
@@ -254,6 +266,11 @@ export class Util {
 			}
 		}
 	}
+
+	public static hasNitro: (member: GuildMember) => Promise<boolean> = async (
+		member: GuildMember
+	): Promise<boolean> =>
+		typeof (await member.user.fetch(true)).bannerURL() === "string";
 
 	public static nextLevel(
 		level: number,
@@ -565,8 +582,9 @@ export class Util {
 			where: { id: member.id }
 		});
 
-		if (!m)
+		if (!m) {
 			m = await global.prisma.member.create({ data: { id: member.id } });
+		}
 
 		const levels: number[] = Object.keys(Constants.LevelRoles).map(
 			(value: string): number => parseInt(value)

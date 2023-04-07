@@ -25,7 +25,7 @@ export default class ReadyListener extends Listener {
 		client.logger.ready(
 			`Logged in as ${
 				client.user.tag
-			} | Status: ${client.formatter.status(
+			} | Status: ${client.formatter.userStatus(
 				client.user.presence.status
 			)} | Version: v${client.config.version}`,
 			"client"
