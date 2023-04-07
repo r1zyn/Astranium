@@ -3,7 +3,7 @@ import { Constants } from "@core/constants";
 import type { Event } from "@prisma/client";
 import type {
 	GuildScheduledEvent,
-	WebhookCreateMessageOptions
+	WebhookMessageCreateOptions
 } from "discord.js";
 import { Listener } from "@lib/Listener";
 
@@ -28,7 +28,7 @@ export default class GuildScheduledEventUpdateListener extends Listener {
 		});
 		if (!event) return;
 
-		const data: WebhookCreateMessageOptions = await client.util.eventData(
+		const data: WebhookMessageCreateOptions = await client.util.eventData(
 			newEvent,
 			newEvent.guild
 		);

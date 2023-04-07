@@ -184,24 +184,26 @@ export default class WhoisCommand extends Command {
 						Constants.ActivityType[activity.type]
 					} ${activity.name}`;
 
-					if (!activity.details && !activity.state)
+					if (!activity.details && !activity.state) {
 						details.push(activityStatus);
+					}
 
 					if (activity.timestamps) {
-						if (activity.timestamps.end)
+						if (activity.timestamps.end) {
 							details.push(
 								`${client.formatter.difference(
 									activity.timestamps.start as Date,
 									activity.timestamps.end
 								)} left`
 							);
-						else
+						} else {
 							details.push(
 								`${client.formatter.difference(
 									activity.timestamps.start as Date,
 									new Date()
 								)} elapsed`
 							);
+						}
 					}
 
 					embed.addFields({

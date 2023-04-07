@@ -1,7 +1,7 @@
 import type {
 	APIMessage,
 	GuildScheduledEvent,
-	WebhookCreateMessageOptions
+	WebhookMessageCreateOptions
 } from "discord.js";
 import type { AstraniumClient } from "@lib/Client";
 import { Constants } from "@core/constants";
@@ -22,7 +22,7 @@ export default class GuildScheduledEventCreateListener extends Listener {
 	): Promise<void> {
 		if (!event.guild) return;
 
-		const data: WebhookCreateMessageOptions = await client.util.eventData(
+		const data: WebhookMessageCreateOptions = await client.util.eventData(
 			event,
 			event.guild
 		);

@@ -169,12 +169,15 @@ export class Formatter {
 	public static userAcknowledgements(member: GuildMember): string[] {
 		const acknowledgements: MemberAcknowledgements[] = [];
 
-		if (member.id === member.guild.ownerId)
+		if (member.id === member.guild.ownerId) {
 			acknowledgements.push("Server Owner");
-		if (member.permissions.has("Administrator"))
+		}
+		if (member.permissions.has("Administrator")) {
 			acknowledgements.push("Administrator");
-		if (member.roles.cache.has(Constants["Roles"].staff))
+		}
+		if (member.roles.cache.has(Constants["Roles"].staff)) {
 			acknowledgements.push("Staff Member");
+		}
 		if (member.premiumSince) acknowledgements.push("Server Booster");
 		if (acknowledgements.length === 0) acknowledgements.push("None");
 

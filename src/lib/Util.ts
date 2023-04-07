@@ -26,7 +26,7 @@ import {
 	version,
 	VoiceChannel,
 	Webhook,
-	WebhookCreateMessageOptions
+	WebhookMessageCreateOptions
 } from "discord.js";
 import type { AstraniumClient } from "@lib/Client";
 import type { Command } from "@lib/Command";
@@ -63,6 +63,13 @@ export class Util {
 			.then((res: Response): Promise<any> => res.json())
 			.then((json: any): Promise<Message> => message.reply(json.cnt))
 			.catch((): null => null);
+	}
+
+	public static colourImageURL(
+		hex: string,
+		size: `${number}x${number}`
+	): `https://singlecolorimage.com/get/${string}/${number}x${number}.png` {
+		return `https://singlecolorimage.com/get/${hex}/${size}.png`;
 	}
 
 	public static createOption<A extends ApplicationCommandOption, O>(
@@ -128,9 +135,9 @@ export class Util {
 	public static async eventData(
 		event: GuildScheduledEvent,
 		guild: Guild
-	): Promise<WebhookCreateMessageOptions> {
+	): Promise<WebhookMessageCreateOptions> {
 		const userCount: number = (await event.fetchSubscribers()).size;
-		const data: WebhookCreateMessageOptions = {
+		const data: WebhookMessageCreateOptions = {
 			content: `${Formatter.roleMention(Constants.Roles["event_ping"])} ${
 				event.creator
 			} created a new event! ${userCount} people are currently interested in this event.`,
@@ -203,7 +210,7 @@ export class Util {
 			return bannerURL;
 		} else {
 			const hex: string = (user.accentColor as number).toString(16);
-			return `https://singlecolorimage.com/get/${hex}/600x200.png`;
+			return this.colourImageURL(hex, `${600}x${200}`);
 		}
 	}
 

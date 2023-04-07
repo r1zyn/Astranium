@@ -2,7 +2,7 @@ import type { AstraniumClient } from "@lib/Client";
 import { Constants } from "@core/constants";
 import type {
 	GuildScheduledEvent,
-	WebhookCreateMessageOptions
+	WebhookMessageCreateOptions
 } from "discord.js";
 import type { Event } from "@prisma/client";
 import { Listener } from "@lib/Listener";
@@ -27,7 +27,7 @@ export default class GuildScheduledEventDeleteListener extends Listener {
 		});
 		if (!event) return;
 
-		const data: WebhookCreateMessageOptions = await client.util.eventData(
+		const data: WebhookMessageCreateOptions = await client.util.eventData(
 			deletedEvent,
 			deletedEvent.guild
 		);
