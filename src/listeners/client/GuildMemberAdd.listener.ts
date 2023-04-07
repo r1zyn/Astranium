@@ -1,4 +1,5 @@
 import type { AstraniumClient } from "@lib/Client";
+import { Constants } from "@core/constants";
 import type { GuildMember } from "discord.js";
 import { Listener } from "@lib/Listener";
 
@@ -21,6 +22,8 @@ export default class GuildMemberAddListener extends Listener {
 
 		if (!member.user.bot) {
 			await client.util.syncMember(member);
+		} else {
+			await member.roles.add(Constants["Roles"].bot);
 		}
 	}
 }

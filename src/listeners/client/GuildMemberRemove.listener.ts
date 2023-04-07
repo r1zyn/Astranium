@@ -40,7 +40,7 @@ export default class GuildMemberRemoveListener extends Listener {
 			);
 
 		if (reactions) {
-			reactions.users.remove(member.user);
+			await reactions.users.remove(member.user);
 		}
 	}
 }

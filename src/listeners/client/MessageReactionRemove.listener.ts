@@ -27,7 +27,7 @@ export default class MessageReactionRemoveListener extends Listener {
 	): Promise<any> {
 		if (reaction.partial) await reaction.fetch();
 
-		await handleStarboard(client, reaction);
+		await handleStarboard(client, reaction, user);
 		await handleReactionRoles(client, reaction, user);
 	}
 }
@@ -37,6 +37,7 @@ async function handleReactionRoles(
 	reaction: MessageReaction,
 	user: User
 ): Promise<void> {
+	if (user.bot) return;
 	const guild: Guild | null = reaction.message.guild;
 
 	if (guild) {
@@ -67,8 +68,11 @@ async function handleReactionRoles(
 
 async function handleStarboard(
 	client: AstraniumClient,
-	reaction: MessageReaction
+	reaction: MessageReaction,
+	user: User
 ): Promise<void> {
+	if (user.bot) return;
+
 	if (reaction.message.guild && reaction.message.author) {
 		if (reaction.message.channel.id === Constants.Channels["starboard"]) {
 			return;

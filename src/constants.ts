@@ -186,7 +186,7 @@ export class Constants {
 		},
 		"other_gender": {
 			role: "1071928631628148917",
-			reaction: "⚪",
+			reaction: "🔵",
 			messageID: Constants.ReactionMessages["gender"]
 		},
 		// Age roles
@@ -229,6 +229,11 @@ export class Constants {
 		"oceania": {
 			role: "927805314961637376",
 			reaction: "5️⃣",
+			messageID: Constants.ReactionMessages["location"]
+		},
+		"africa": {
+			role: "1085758231726538752",
+			reaction: "6️⃣",
 			messageID: Constants.ReactionMessages["location"]
 		},
 		// Ping roles
@@ -304,7 +309,9 @@ export class Constants {
 		"event_ping": "927823396773982230",
 		"giveaway_ping": "927823425647546388",
 		"qotd_ping": "927823456349847582",
-		"poll_ping": "927823486477557780"
+		"poll_ping": "927823486477557780",
+		// Other
+		"bot": "927727427713658922"
 	};
 
 	public static LevelRoles = {

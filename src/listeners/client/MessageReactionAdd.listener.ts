@@ -30,7 +30,7 @@ export default class MessageReactionAddListener extends Listener {
 		if (reaction.partial) await reaction.fetch();
 
 		await handleVerification(client, reaction, user);
-		await handleStarboard(client, reaction);
+		await handleStarboard(client, reaction, user);
 		await handleReactionRoles(client, reaction, user);
 	}
 }
@@ -40,6 +40,7 @@ async function handleReactionRoles(
 	reaction: MessageReaction,
 	user: User
 ): Promise<void> {
+	if (user.bot) return;
 	const guild: Guild | null = reaction.message.guild;
 
 	if (guild) {
@@ -60,6 +61,29 @@ async function handleReactionRoles(
 						user
 					);
 
+					for (const msgReaction of reaction.message.reactions.cache
+						.filter(
+							(r: MessageReaction): boolean =>
+								r.users.cache.has(user.id) &&
+								r.emoji !== reaction.emoji &&
+								r.message.id !==
+									Constants["ReactionMessages"].pings
+						)
+						.values()) {
+						await msgReaction.users.remove(user);
+						await member.roles.remove(
+							Object.values(Constants.ReactionRoles).filter(
+								(rr: {
+									role: string;
+									reaction: string;
+									messageID: string;
+								}): boolean =>
+									rr.messageID === msgReaction.message.id &&
+									rr.reaction == msgReaction.emoji.name
+							)[0].role
+						);
+					}
+
 					if (!member.roles.cache.has(reactionRoleData.role)) {
 						await member.roles.add(reactionRoleData.role);
 					}
@@ -71,8 +95,11 @@ async function handleReactionRoles(
 
 async function handleStarboard(
 	client: AstraniumClient,
-	reaction: MessageReaction
+	reaction: MessageReaction,
+	user: User
 ): Promise<void> {
+	if (user.bot) return;
+
 	if (reaction.message.guild && reaction.message.author) {
 		if (reaction.emoji.name === Constants.Emojis["star"]) {
 			const starboard: TextChannel =
@@ -160,6 +187,8 @@ async function handleVerification(
 	reaction: MessageReaction,
 	user: User
 ): Promise<void> {
+	if (user.bot) return;
+
 	if (
 		reaction.emoji.name === Constants.Emojis["green_check_mark"] &&
 		reaction.message.id === Constants.ReactionMessages["verification"]

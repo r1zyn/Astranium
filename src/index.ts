@@ -38,6 +38,7 @@ new Promise<void>(
 					);
 			}
 
+			await client.util.syncReactions(astranium);
 			await client.util.syncMembers(astranium);
 			await client.util.syncStats(astranium);
 			global.logger.info(

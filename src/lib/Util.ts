@@ -21,6 +21,7 @@ import {
 	Message,
 	MessageReaction,
 	PermissionsString,
+	TextChannel,
 	User,
 	version,
 	VoiceChannel,
@@ -616,6 +617,41 @@ export class Util {
 		(await guild.members.fetch())
 			.filter((member: GuildMember): boolean => !member.user.bot)
 			.forEach(this.syncMember);
+	}
+
+	public static async syncReactions(guild: Guild): Promise<void> {
+		const verificationMsg: Message<true> = await (
+			(await guild.channels.fetch(
+				Constants["Channels"].verification
+			)) as TextChannel
+		).messages.fetch(Constants["ReactionMessages"].verification);
+		await verificationMsg.react(Constants["Emojis"].green_check_mark);
+
+		for (const msgKey of Object.keys(Constants["ReactionMessages"]).filter(
+			(id: string): boolean => id !== "verification"
+		)) {
+			const reactionMsgId: string = Constants["ReactionMessages"][msgKey];
+			const reactionMsg: Message<true> = await (
+				(await guild.channels.fetch(
+					Constants["Channels"].self_roles
+				)) as TextChannel
+			).messages.fetch(reactionMsgId);
+			const reactionMsgData: {
+				role: string;
+				reaction: string;
+				messageID: string;
+			}[] = Object.values(Constants["ReactionRoles"]).filter(
+				(r: {
+					role: string;
+					reaction: string;
+					messageID: string;
+				}): boolean => r.messageID === reactionMsgId
+			);
+
+			for (const reactionData of reactionMsgData) {
+				await reactionMsg.react(reactionData.reaction);
+			}
+		}
 	}
 
 	public static async syncStats(guild: Guild): Promise<void> {
